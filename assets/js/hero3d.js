@@ -257,14 +257,14 @@ function createScreens(data) {
     const lines = [data.line1, data.line2].filter(Boolean).map(text => text.toUpperCase());
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.font = '600 64px Fredoka, system-ui, sans-serif';
+    ctx.font = '700 58px Montserrat, system-ui, sans-serif';
     lines.forEach((line, i) => {
       const on = ramp(cycle, 0.3 + i * 0.06, 0.42 + i * 0.06) * fadeOut;
       ctx.shadowColor = 'rgba(252,242,231,0.5)';
       ctx.shadowBlur = cycle < 0.7 ? 22 * on : 7 * on;
       ctx.globalAlpha = 0.12 + 0.88 * on;
       ctx.fillStyle = LOGO_COLOR;
-      ctx.fillText(line, W / 2, H * 0.6 + i * 74);
+      ctx.fillText(line, W / 2, H * 0.6 + i * 70);
     });
     ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
