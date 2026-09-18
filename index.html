@@ -7,11 +7,12 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script async src="https://www.instagram.com/embed.js"></script>
 <style id="pageStyle"></style>
 </head>
 <body>
 <div id="app"></div>
-<script id="site-data" type="application/json">{"hero":{"eyebrow":"Studio de création visuelle — photo · film · direction artistique","titleLine1":"On règle la lumière.","titleLine2":"Vous captez l'attention.","lede":"RayVo Studio conçoit des images et des films pour les marques qui veulent qu'on les regarde deux fois. De la prise de vue au montage final, chaque projet est cadré comme une pièce unique.","cta1":"Voir nos réalisations","cta2":"Nous écrire"},"services":[{"tag":"50MM · f/1.8 · LUMIÈRE NATURELLE","title":"Photographie de marque","desc":"Produits, portraits d'équipe, reportages — des images pensées pour le web, les réseaux et l'impression."},{"tag":"4K · 24 IM/S · CAPTATION & MONTAGE","title":"Films & motion","desc":"Films de marque, capsules produit, contenus courts pour les réseaux sociaux, du tournage à l'étalonnage."},{"tag":"MOODBOARD · CHARTE · DIRECTION","title":"Direction artistique","desc":"Identité visuelle et cohérence créative sur l'ensemble de vos supports, print comme digital."}],"process":[{"title":"Cadrage","desc":"Brief, objectifs, références et repérage du lieu de tournage."},{"title":"Captation","desc":"Prise de vue en studio ou sur site, avec direction de plateau."},{"title":"Post-production","desc":"Montage, étalonnage couleur et retouche photo soignée."},{"title":"Livraison","desc":"Fichiers formatés pour le web, les réseaux et l'impression."}],"portfolio":[{"title":"Mode — collection printemps","exif":"PHOTO · 35MM · f/2","color":"#c67d24"},{"title":"Gastronomie — ouverture de restaurant","exif":"PHOTO · 50MM · f/1.8","color":"#3f8f8a"},{"title":"Tech — lancement produit","exif":"FILM · 4K · 24 IM/S","color":"#8a5fbf"},{"title":"Musique — session live","exif":"FILM · MULTICAM · 4K","color":"#c6522c"},{"title":"Corporate — portraits d'équipe","exif":"PHOTO · 85MM · f/2.2","color":"#4a6fc6"},{"title":"Événementiel — captation live","exif":"FILM · MULTICAM · 60 IM/S","color":"#c69a2c"}],"about":{"heading":"Une image bien réglée vaut mille arguments","text":"RayVo Studio accompagne les marques et les entrepreneurs qui veulent des visuels à la hauteur de leur travail. Pas de recette toute faite : chaque projet part d'un vrai brief, d'un vrai lieu, d'une vraie lumière.","pills":["Exigence technique","Direction créative","Délais tenus","Livrables multi-formats","Studio & extérieur"]},"contact":{"studio":"RayVo Studio","email":"rayvo.studio@gmail.com","social":"@rayvo_studio","zone":"Sur site & en studio"}}</script>
+<script id="site-data" type="application/json">{"hero":{"eyebrow":"Studio de création visuelle — photo · film · direction artistique","titleLine1":"On règle la lumière.","titleLine2":"Vous captez l'attention.","lede":"RayVo Studio conçoit des images et des films pour les marques qui veulent qu'on les regarde deux fois. De la prise de vue au montage final, chaque projet est cadré comme une pièce unique.","cta1":"Voir nos réalisations","cta2":"Nous écrire"},"services":[{"tag":"50MM · f/1.8 · LUMIÈRE NATURELLE","title":"Photographie de marque","desc":"Produits, portraits d'équipe, reportages — des images pensées pour le web, les réseaux et l'impression."},{"tag":"4K · 24 IM/S · CAPTATION & MONTAGE","title":"Films & motion","desc":"Films de marque, capsules produit, contenus courts pour les réseaux sociaux, du tournage à l'étalonnage."},{"tag":"MOODBOARD · CHARTE · DIRECTION","title":"Direction artistique","desc":"Identité visuelle et cohérence créative sur l'ensemble de vos supports, print comme digital."}],"process":[{"title":"Cadrage","desc":"Brief, objectifs, références et repérage du lieu de tournage."},{"title":"Captation","desc":"Prise de vue en studio ou sur site, avec direction de plateau."},{"title":"Post-production","desc":"Montage, étalonnage couleur et retouche photo soignée."},{"title":"Livraison","desc":"Fichiers formatés pour le web, les réseaux et l'impression."}],"portfolio":[{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#c67d24","instagramUrl":"https://www.instagram.com/p/DPDvfWXjI-l/"},{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#3f8f8a","instagramUrl":"https://www.instagram.com/reel/DVgsGQVCKOL/"},{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#8a5fbf","instagramUrl":"https://www.instagram.com/reel/Dcyxx_zNvML/"},{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#c6522c","instagramUrl":"https://www.instagram.com/p/DOwE8k5jHYV/"},{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#4a6fc6","instagramUrl":"https://www.instagram.com/p/DOypzNuCG9u/"},{"title":"Publication Instagram","exif":"@rayvo_studio","color":"#c69a2c","instagramUrl":"https://www.instagram.com/p/DO1OhsDj9QX/"}],"about":{"heading":"Une image bien réglée vaut mille arguments","text":"RayVo Studio accompagne les marques et les entrepreneurs qui veulent des visuels à la hauteur de leur travail. Pas de recette toute faite : chaque projet part d'un vrai brief, d'un vrai lieu, d'une vraie lumière.","pills":["Exigence technique","Direction créative","Délais tenus","Livrables multi-formats","Studio & extérieur"]},"contact":{"studio":"RayVo Studio","email":"rayvo.studio@gmail.com","social":"@rayvo_studio","zone":"Sur site & en studio"}}</script>
 <script>
 const SELF_JS = document.currentScript.textContent;
 
@@ -83,8 +84,11 @@ const CSS_TEXT = `
   .grid-plates{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
   .plate{background:var(--surface-2);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease;}
   .plate:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,0.14);}
-  .frame{aspect-ratio:4/3;position:relative;}
+  .frame{aspect-ratio:4/3;position:relative;overflow:hidden;}
   .frame .fnum{position:absolute;top:10px;left:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.35);padding:2px 6px;border-radius:2px;}
+  .frame.ig-frame{aspect-ratio:auto;}
+  .ig-frame iframe{width:100% !important;}
+  .ig-fallback{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;color:#fff;background:linear-gradient(135deg,#3a2c1e,#c67d24);text-decoration:none;font-family:'Archivo',sans-serif;font-size:13px;font-weight:600;}
   .plate-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:4px;}
   .plate-body h3{font-size:16px;font-weight:600;font-family:'Archivo',sans-serif;}
   .plate-body .exif{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:0.02em;}
@@ -144,6 +148,14 @@ function esc(s){
 function safeColor(c){
   return /^#[0-9a-fA-F]{6}$/.test(c) ? c : '#c67d24';
 }
+function parseInstagramUrl(url){
+  const m = String(url ?? '').match(/instagram\.com\/(p|reel|tv)\/([A-Za-z0-9_-]+)/);
+  if(!m) return null;
+  return {type:m[1], code:m[2], clean:`https://www.instagram.com/${m[1]}/${m[2]}/`};
+}
+function reprocessInstagramEmbeds(){
+  try{ if(window.instgrm && window.instgrm.Embeds) window.instgrm.Embeds.process(); }catch(e){}
+}
 
 function heroHTML(d){
   return `
@@ -173,12 +185,19 @@ function processHTML(list){
 }
 function portfolioHTML(list){
   return list.map((p,i) => {
+    const ig = parseInstagramUrl(p.instagramUrl);
     const c = safeColor(p.color);
-    return `
-    <article class="plate">
+    const media = ig ? `
+      <div class="frame ig-frame">
+        <blockquote class="instagram-media" data-instgrm-permalink="${esc(ig.clean)}" data-instgrm-version="14" style="margin:0;width:100%;background:#000;">
+          <a href="${esc(ig.clean)}" target="_blank" rel="noopener" class="ig-fallback">Voir sur Instagram ↗</a>
+        </blockquote>
+      </div>` : `
       <div class="frame" style="background:linear-gradient(135deg, color-mix(in srgb, ${c} 35%, #140f08), ${c});">
         <span class="fnum">${String(i+1).padStart(2,'0')}</span>
-      </div>
+      </div>`;
+    return `
+    <article class="plate">${media}
       <div class="plate-body">
         <h3>${esc(p.title)}</h3>
         <span class="exif">${esc(p.exif)}</span>
@@ -230,9 +249,10 @@ function portfolioFields(p, i){
   const c = safeColor(p.color);
   return `
     <div class="admin-item">
+      <div class="field"><label for="port${i}-ig">Lien Instagram (post ou reel)</label><input type="text" id="port${i}-ig" placeholder="https://www.instagram.com/p/..." value="${esc(p.instagramUrl || '')}"></div>
       <div class="field"><label for="port${i}-title">Projet ${i+1} — titre</label><input type="text" id="port${i}-title" value="${esc(p.title)}"></div>
-      <div class="field"><label for="port${i}-exif">Légende technique</label><input type="text" id="port${i}-exif" value="${esc(p.exif)}"></div>
-      <div class="field"><label for="port${i}-color">Couleur</label><input type="color" id="port${i}-color" value="${c}"></div>
+      <div class="field"><label for="port${i}-exif">Légende</label><input type="text" id="port${i}-exif" value="${esc(p.exif)}"></div>
+      <div class="field"><label for="port${i}-color">Couleur de repli (si pas de lien)</label><input type="color" id="port${i}-color" value="${c}"></div>
     </div>`;
 }
 
@@ -362,6 +382,7 @@ function buildFullDocument(data){
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script async src="https://www.instagram.com/embed.js"></script>
 <style>${CSS_TEXT}</style>
 </head>
 <body>
@@ -379,6 +400,7 @@ let artifactCap = null;
 function render(){
   document.getElementById('app').innerHTML = bodyShellHTML(DATA);
   applyAdminVisibility();
+  reprocessInstagramEmbeds();
 }
 function applyAdminVisibility(){
   const fab = document.getElementById('adminFab');
@@ -407,7 +429,7 @@ function collectFormData(){
     },
     services:[0,1,2].map(i => ({tag:v(`svc${i}-tag`), title:v(`svc${i}-title`), desc:v(`svc${i}-desc`)})),
     process:[0,1,2,3].map(i => ({title:v(`proc${i}-title`), desc:v(`proc${i}-desc`)})),
-    portfolio:[0,1,2,3,4,5].map(i => ({title:v(`port${i}-title`), exif:v(`port${i}-exif`), color:safeColor(v(`port${i}-color`))})),
+    portfolio:[0,1,2,3,4,5].map(i => ({title:v(`port${i}-title`), exif:v(`port${i}-exif`), color:safeColor(v(`port${i}-color`)), instagramUrl:v(`port${i}-ig`)})),
     about:{
       heading:v('about-heading'), text:v('about-text'),
       pills:v('about-pills').split(',').map(s => s.trim()).filter(Boolean)
