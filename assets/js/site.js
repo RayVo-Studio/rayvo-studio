@@ -5,7 +5,9 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     const target = document.getElementById(link.getAttribute('href').slice(1));
     if (target) {
       event.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      target.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+      history.replaceState(null, '', '#' + target.id);
     }
   });
 });
