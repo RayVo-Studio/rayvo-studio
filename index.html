@@ -1,0 +1,474 @@
+<title>RayVo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style id="pageStyle"></style>
+
+<div id="app"></div>
+<script id="site-data" type="application/json">{"hero":{"eyebrow":"Studio de création visuelle — photo · film · direction artistique","titleLine1":"On règle la lumière.","titleLine2":"Vous captez l'attention.","lede":"RayVo Studio conçoit des images et des films pour les marques qui veulent qu'on les regarde deux fois. De la prise de vue au montage final, chaque projet est cadré comme une pièce unique.","cta1":"Voir nos réalisations","cta2":"Nous écrire"},"services":[{"tag":"50MM · f/1.8 · LUMIÈRE NATURELLE","title":"Photographie de marque","desc":"Produits, portraits d'équipe, reportages — des images pensées pour le web, les réseaux et l'impression."},{"tag":"4K · 24 IM/S · CAPTATION & MONTAGE","title":"Films & motion","desc":"Films de marque, capsules produit, contenus courts pour les réseaux sociaux, du tournage à l'étalonnage."},{"tag":"MOODBOARD · CHARTE · DIRECTION","title":"Direction artistique","desc":"Identité visuelle et cohérence créative sur l'ensemble de vos supports, print comme digital."}],"process":[{"title":"Cadrage","desc":"Brief, objectifs, références et repérage du lieu de tournage."},{"title":"Captation","desc":"Prise de vue en studio ou sur site, avec direction de plateau."},{"title":"Post-production","desc":"Montage, étalonnage couleur et retouche photo soignée."},{"title":"Livraison","desc":"Fichiers formatés pour le web, les réseaux et l'impression."}],"portfolio":[{"title":"Mode — collection printemps","exif":"PHOTO · 35MM · f/2","color":"#c67d24"},{"title":"Gastronomie — ouverture de restaurant","exif":"PHOTO · 50MM · f/1.8","color":"#3f8f8a"},{"title":"Tech — lancement produit","exif":"FILM · 4K · 24 IM/S","color":"#8a5fbf"},{"title":"Musique — session live","exif":"FILM · MULTICAM · 4K","color":"#c6522c"},{"title":"Corporate — portraits d'équipe","exif":"PHOTO · 85MM · f/2.2","color":"#4a6fc6"},{"title":"Événementiel — captation live","exif":"FILM · MULTICAM · 60 IM/S","color":"#c69a2c"}],"about":{"heading":"Une image bien réglée vaut mille arguments","text":"RayVo Studio accompagne les marques et les entrepreneurs qui veulent des visuels à la hauteur de leur travail. Pas de recette toute faite : chaque projet part d'un vrai brief, d'un vrai lieu, d'une vraie lumière.","pills":["Exigence technique","Direction créative","Délais tenus","Livrables multi-formats","Studio & extérieur"]},"contact":{"studio":"RayVo Studio","email":"rayvo.studio@gmail.com","social":"@rayvo.studio","zone":"Sur site & en studio"}}</script>
+<script>
+const SELF_JS = document.currentScript.textContent;
+
+const CSS_TEXT = `
+  :root{
+    --bg:#e9ebe4;
+    --surface:#f7f8f3;
+    --surface-2:#ffffff;
+    --text:#1a1b17;
+    --muted:#69695f;
+    --accent:#c67d24;
+    --accent-ink:#1a1204;
+    --line:rgba(26,27,23,0.12);
+    --shadow:0 1px 2px rgba(26,27,23,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121317; --surface:#1a1c21; --surface-2:#1f2126;
+      --text:#eeece4; --muted:#9d9a90; --accent:#e2a13f; --accent-ink:#1a1204;
+      --line:rgba(238,236,228,0.12); --shadow:0 1px 2px rgba(0,0,0,0.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121317; --surface:#1a1c21; --surface-2:#1f2126;
+    --text:#eeece4; --muted:#9d9a90; --accent:#e2a13f; --accent-ink:#1a1204;
+    --line:rgba(238,236,228,0.12); --shadow:0 1px 2px rgba(0,0,0,0.3);
+  }
+  *{box-sizing:border-box;}
+  html,body{background:var(--bg);}
+  body{color:var(--text);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;padding-inline:0;margin:0;}
+  a{color:inherit;}
+  .wrap{max-width:1100px;margin-inline:auto;padding-inline:24px;}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;text-wrap:balance;margin:0;}
+  .eyebrow{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);}
+  .mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+  nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb, var(--bg) 88%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;padding-block:16px;gap:16px;}
+  .logo{font-family:'Fraunces',serif;font-weight:600;font-size:19px;letter-spacing:-0.01em;}
+  .logo span{color:var(--accent);}
+  .navlinks{display:flex;gap:28px;font-size:14px;font-weight:500;}
+  .navlinks a{text-decoration:none;color:var(--muted);transition:color .15s ease;}
+  .navlinks a:hover,.navlinks a:focus-visible{color:var(--text);}
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);}
+  .beam{position:absolute;inset:-20% -10%;background:conic-gradient(from 200deg at 15% 20%,transparent 0deg,color-mix(in srgb, var(--accent) 22%, transparent) 18deg,transparent 40deg,transparent 360deg);opacity:0.9;animation:sweep 26s linear infinite;pointer-events:none;}
+  @keyframes sweep{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+  @media (prefers-reduced-motion: reduce){.beam{animation:none;}}
+  .hero-inner{position:relative;padding-block:96px 72px;display:flex;flex-direction:column;gap:28px;max-width:760px;}
+  .hero h1{font-size:clamp(38px,6vw,64px);line-height:1.04;letter-spacing:-0.01em;}
+  .hero p.lede{font-size:18px;color:var(--muted);max-width:52ch;}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:3px;font-weight:600;font-size:14px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:transform .15s ease,opacity .15s ease;}
+  .btn:hover{transform:translateY(-1px);}
+  .btn-primary{background:var(--accent);color:var(--accent-ink);}
+  .btn-ghost{border-color:var(--line);color:var(--text);}
+  section{padding-block:80px;}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:44px;flex-wrap:wrap;}
+  .sec-head h2{font-size:clamp(26px,3.4vw,36px);}
+  .sec-num{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);}
+  .settings{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .setting{background:var(--surface);padding:32px 28px;display:flex;flex-direction:column;gap:14px;}
+  .setting .tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);letter-spacing:0.05em;}
+  .setting h3{font-size:21px;font-weight:600;}
+  .setting p{color:var(--muted);font-size:14.5px;margin:0;}
+  .process{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  .step{border-top:2px solid var(--accent);padding-top:16px;display:flex;flex-direction:column;gap:8px;}
+  .step .n{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);}
+  .step h3{font-size:17px;font-weight:600;}
+  .step p{margin:0;color:var(--muted);font-size:14px;}
+  .grid-plates{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .plate{background:var(--surface-2);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:transform .18s ease,box-shadow .18s ease;}
+  .plate:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,0.14);}
+  .frame{aspect-ratio:4/3;position:relative;}
+  .frame .fnum{position:absolute;top:10px;left:10px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(255,255,255,0.85);background:rgba(0,0,0,0.35);padding:2px 6px;border-radius:2px;}
+  .plate-body{padding:16px 18px 20px;display:flex;flex-direction:column;gap:4px;}
+  .plate-body h3{font-size:16px;font-weight:600;font-family:'Archivo',sans-serif;}
+  .plate-body .exif{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--muted);letter-spacing:0.02em;}
+  .about{display:grid;grid-template-columns:1.1fr 0.9fr;gap:56px;align-items:start;}
+  .about p{font-size:17px;color:var(--muted);max-width:56ch;}
+  .values{display:flex;flex-wrap:wrap;gap:10px;align-content:flex-start;}
+  .pill{border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--muted);}
+  .contact-card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:44px;display:grid;grid-template-columns:1fr 1fr;gap:40px;}
+  .contact-card h2{font-size:30px;}
+  .spec-row{display:flex;justify-content:space-between;padding-block:12px;border-bottom:1px solid var(--line);font-size:14px;gap:12px;}
+  .spec-row:last-child{border-bottom:none;}
+  .spec-row .k{font-family:'JetBrains Mono',monospace;color:var(--muted);letter-spacing:0.04em;white-space:nowrap;}
+  .spec-row .v a{text-decoration:none;font-weight:600;border-bottom:1px solid var(--accent);}
+  footer{border-top:1px solid var(--line);padding-block:28px;}
+  footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px;color:var(--muted);}
+  .admin-fab{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:30;display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:var(--text);color:var(--bg);border:none;font-weight:600;font-size:13px;font-family:'Archivo',sans-serif;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,0.25);}
+  .admin-fab[hidden]{display:none;}
+  .admin-backdrop{position:fixed;inset:0;background:rgba(10,10,8,0.45);opacity:0;pointer-events:none;transition:opacity .2s ease;z-index:40;}
+  .admin-backdrop.open{opacity:1;pointer-events:auto;}
+  .admin-panel{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--surface-2);border-left:1px solid var(--line);z-index:41;transform:translateX(105%);transition:transform .25s ease;overflow-y:auto;padding:24px 24px calc(24px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:24px;}
+  .admin-panel.open{transform:translateX(0);}
+  .admin-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .admin-head h2{font-size:20px;}
+  .admin-close{background:none;border:1px solid var(--line);border-radius:6px;width:32px;height:32px;cursor:pointer;font-size:15px;color:var(--text);}
+  .admin-group{display:flex;flex-direction:column;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--line);}
+  .admin-group:last-of-type{border-bottom:none;}
+  .admin-group h3{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin:0;}
+  .admin-item{display:flex;flex-direction:column;gap:10px;padding:12px;border:1px solid var(--line);border-radius:6px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:12px;color:var(--muted);}
+  .field input[type="text"],.field input[type="email"],.field textarea{
+    font-family:'Archivo',sans-serif;font-size:14px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--text);width:100%;resize:vertical;
+  }
+  .field input[type="color"]{width:56px;height:32px;padding:2px;border:1px solid var(--line);border-radius:4px;background:var(--surface);cursor:pointer;}
+  .admin-actions{position:sticky;bottom:0;background:var(--surface-2);display:flex;gap:10px;padding-top:12px;}
+  .admin-status{font-size:12.5px;color:var(--muted);min-height:16px;}
+  @media (max-width: 860px){
+    .settings{grid-template-columns:1fr;}
+    .process{grid-template-columns:1fr 1fr;}
+    .grid-plates{grid-template-columns:1fr 1fr;}
+    .about{grid-template-columns:1fr;}
+    .contact-card{grid-template-columns:1fr;padding:28px;}
+    .navlinks{gap:16px;font-size:13px;}
+  }
+  @media (max-width: 520px){
+    .process{grid-template-columns:1fr 1fr;}
+    .grid-plates{grid-template-columns:1fr;}
+    .hero-inner{padding-block:64px 48px;}
+  }
+`;
+
+document.getElementById('pageStyle').textContent = CSS_TEXT;
+
+function esc(s){
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function safeColor(c){
+  return /^#[0-9a-fA-F]{6}$/.test(c) ? c : '#c67d24';
+}
+
+function heroHTML(d){
+  return `
+    <span class="eyebrow">${esc(d.eyebrow)}</span>
+    <h1>${esc(d.titleLine1)}<br>${esc(d.titleLine2)}</h1>
+    <p class="lede">${esc(d.lede)}</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#realisations">${esc(d.cta1)}</a>
+      <a class="btn btn-ghost" href="#contact">${esc(d.cta2)}</a>
+    </div>`;
+}
+function servicesHTML(list){
+  return list.map(s => `
+    <div class="setting">
+      <span class="tag">${esc(s.tag)}</span>
+      <h3>${esc(s.title)}</h3>
+      <p>${esc(s.desc)}</p>
+    </div>`).join('');
+}
+function processHTML(list){
+  return list.map((p,i) => `
+    <div class="step">
+      <span class="n mono">${String(i+1).padStart(2,'0')}</span>
+      <h3>${esc(p.title)}</h3>
+      <p>${esc(p.desc)}</p>
+    </div>`).join('');
+}
+function portfolioHTML(list){
+  return list.map((p,i) => {
+    const c = safeColor(p.color);
+    return `
+    <article class="plate">
+      <div class="frame" style="background:linear-gradient(135deg, color-mix(in srgb, ${c} 35%, #140f08), ${c});">
+        <span class="fnum">${String(i+1).padStart(2,'0')}</span>
+      </div>
+      <div class="plate-body">
+        <h3>${esc(p.title)}</h3>
+        <span class="exif">${esc(p.exif)}</span>
+      </div>
+    </article>`;
+  }).join('');
+}
+function aboutHTML(d){
+  return `
+    <div>
+      <span class="eyebrow">Le studio</span>
+      <h2 style="margin-top:12px;font-size:clamp(24px,3vw,32px);">${esc(d.heading)}</h2>
+      <p style="margin-top:18px;">${esc(d.text)}</p>
+    </div>
+    <div class="values">
+      ${d.pills.map(p => `<span class="pill">${esc(p)}</span>`).join('')}
+    </div>`;
+}
+function contactHTML(d){
+  return `
+    <div>
+      <h2>Parlons de votre projet</h2>
+      <p style="color:var(--muted);margin-top:12px;max-width:40ch;">Décrivez-nous votre besoin, on revient vers vous avec un premier cadrage sous 48h.</p>
+    </div>
+    <div>
+      <div class="spec-row"><span class="k">STUDIO</span><span class="v">${esc(d.studio)}</span></div>
+      <div class="spec-row"><span class="k">EMAIL</span><span class="v"><a href="mailto:${esc(d.email)}">${esc(d.email)}</a></span></div>
+      <div class="spec-row"><span class="k">RÉSEAUX</span><span class="v">${esc(d.social)}</span></div>
+      <div class="spec-row"><span class="k">ZONE</span><span class="v">${esc(d.zone)}</span></div>
+    </div>`;
+}
+
+function serviceFields(s, i){
+  return `
+    <div class="admin-item">
+      <div class="field"><label for="svc${i}-tag">Réglage (légende technique)</label><input type="text" id="svc${i}-tag" value="${esc(s.tag)}"></div>
+      <div class="field"><label for="svc${i}-title">Titre</label><input type="text" id="svc${i}-title" value="${esc(s.title)}"></div>
+      <div class="field"><label for="svc${i}-desc">Description</label><textarea id="svc${i}-desc" rows="2">${esc(s.desc)}</textarea></div>
+    </div>`;
+}
+function processFields(p, i){
+  return `
+    <div class="admin-item">
+      <div class="field"><label for="proc${i}-title">Étape ${i+1} — titre</label><input type="text" id="proc${i}-title" value="${esc(p.title)}"></div>
+      <div class="field"><label for="proc${i}-desc">Description</label><textarea id="proc${i}-desc" rows="2">${esc(p.desc)}</textarea></div>
+    </div>`;
+}
+function portfolioFields(p, i){
+  const c = safeColor(p.color);
+  return `
+    <div class="admin-item">
+      <div class="field"><label for="port${i}-title">Projet ${i+1} — titre</label><input type="text" id="port${i}-title" value="${esc(p.title)}"></div>
+      <div class="field"><label for="port${i}-exif">Légende technique</label><input type="text" id="port${i}-exif" value="${esc(p.exif)}"></div>
+      <div class="field"><label for="port${i}-color">Couleur</label><input type="color" id="port${i}-color" value="${c}"></div>
+    </div>`;
+}
+
+function adminPanelHTML(data){
+  return `
+    <div class="admin-head">
+      <h2>Édition du site</h2>
+      <button type="button" class="admin-close" id="adminClose" aria-label="Fermer">✕</button>
+    </div>
+
+    <div class="admin-group">
+      <h3>Accueil</h3>
+      <div class="field"><label for="hero-eyebrow">Sur-titre</label><input type="text" id="hero-eyebrow" value="${esc(data.hero.eyebrow)}"></div>
+      <div class="field"><label for="hero-title1">Titre — ligne 1</label><input type="text" id="hero-title1" value="${esc(data.hero.titleLine1)}"></div>
+      <div class="field"><label for="hero-title2">Titre — ligne 2</label><input type="text" id="hero-title2" value="${esc(data.hero.titleLine2)}"></div>
+      <div class="field"><label for="hero-lede">Texte d'introduction</label><textarea id="hero-lede" rows="3">${esc(data.hero.lede)}</textarea></div>
+      <div class="field"><label for="hero-cta1">Bouton 1</label><input type="text" id="hero-cta1" value="${esc(data.hero.cta1)}"></div>
+      <div class="field"><label for="hero-cta2">Bouton 2</label><input type="text" id="hero-cta2" value="${esc(data.hero.cta2)}"></div>
+    </div>
+
+    <div class="admin-group">
+      <h3>Prestations</h3>
+      ${data.services.map(serviceFields).join('')}
+    </div>
+
+    <div class="admin-group">
+      <h3>Process</h3>
+      ${data.process.map(processFields).join('')}
+    </div>
+
+    <div class="admin-group">
+      <h3>Réalisations</h3>
+      ${data.portfolio.map(portfolioFields).join('')}
+    </div>
+
+    <div class="admin-group">
+      <h3>Le studio</h3>
+      <div class="field"><label for="about-heading">Titre</label><input type="text" id="about-heading" value="${esc(data.about.heading)}"></div>
+      <div class="field"><label for="about-text">Texte</label><textarea id="about-text" rows="3">${esc(data.about.text)}</textarea></div>
+      <div class="field"><label for="about-pills">Valeurs (séparées par des virgules)</label><input type="text" id="about-pills" value="${esc(data.about.pills.join(', '))}"></div>
+    </div>
+
+    <div class="admin-group">
+      <h3>Contact</h3>
+      <div class="field"><label for="contact-studio">Nom du studio</label><input type="text" id="contact-studio" value="${esc(data.contact.studio)}"></div>
+      <div class="field"><label for="contact-email">Email</label><input type="email" id="contact-email" value="${esc(data.contact.email)}"></div>
+      <div class="field"><label for="contact-social">Réseaux</label><input type="text" id="contact-social" value="${esc(data.contact.social)}"></div>
+      <div class="field"><label for="contact-zone">Zone d'intervention</label><input type="text" id="contact-zone" value="${esc(data.contact.zone)}"></div>
+    </div>
+
+    <div class="admin-actions">
+      <button type="button" class="btn btn-primary" id="adminSave">Enregistrer</button>
+      <button type="button" class="btn btn-ghost" id="adminCancel">Annuler</button>
+    </div>
+    <div class="admin-status mono" id="adminStatus" role="status"></div>`;
+}
+
+function bodyShellHTML(data){
+  return `
+<nav>
+  <div class="wrap">
+    <div class="logo">RAY<span>VO</span> STUDIO</div>
+    <div class="navlinks">
+      <a href="#reglages">Prestations</a>
+      <a href="#realisations">Réalisations</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="beam" aria-hidden="true"></div>
+  <div class="wrap hero-inner">${heroHTML(data.hero)}</div>
+</header>
+
+<section id="reglages">
+  <div class="wrap">
+    <div class="sec-head"><h2>Prestations</h2><span class="sec-num mono">RÉGLAGES / 01–03</span></div>
+    <div class="settings">${servicesHTML(data.services)}</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="sec-head"><h2>Notre process</h2><span class="sec-num mono">DU BRIEF À LA LIVRAISON</span></div>
+    <div class="process">${processHTML(data.process)}</div>
+  </div>
+</section>
+
+<section id="realisations">
+  <div class="wrap">
+    <div class="sec-head"><h2>Réalisations</h2><span class="sec-num mono">PLANCHE CONTACT — 6 VUES</span></div>
+    <div class="grid-plates">${portfolioHTML(data.portfolio)}</div>
+  </div>
+</section>
+
+<section id="apropos">
+  <div class="wrap about">${aboutHTML(data.about)}</div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact-card">${contactHTML(data.contact)}</div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 ${esc(data.contact.studio)}</span>
+    <span class="mono">PHOTO · FILM · DIRECTION ARTISTIQUE</span>
+  </div>
+</footer>
+
+<button type="button" class="admin-fab" id="adminFab" hidden>✎ Éditer le site</button>
+<div class="admin-backdrop" id="adminBackdrop"></div>
+<aside class="admin-panel" id="adminPanel">${adminPanelHTML(data)}</aside>
+`;
+}
+
+function buildFullDocument(data){
+  return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RayVo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>${CSS_TEXT}</style>
+</head>
+<body>
+<div id="app"></div>
+<script id="site-data" type="application/json">${JSON.stringify(data)}<\/script>
+<script>${SELF_JS}<\/script>
+</body>
+</html>`;
+}
+
+let DATA = JSON.parse(document.getElementById('site-data').textContent);
+let canEditCached = false;
+let artifactCap = null;
+
+function render(){
+  document.getElementById('app').innerHTML = bodyShellHTML(DATA);
+  applyAdminVisibility();
+}
+function applyAdminVisibility(){
+  const fab = document.getElementById('adminFab');
+  if(fab) fab.hidden = !canEditCached;
+}
+
+function openAdmin(){
+  document.getElementById('adminPanel').classList.add('open');
+  document.getElementById('adminBackdrop').classList.add('open');
+}
+function closeAdmin(){
+  document.getElementById('adminPanel').classList.remove('open');
+  document.getElementById('adminBackdrop').classList.remove('open');
+}
+function setStatus(msg){
+  const el = document.getElementById('adminStatus');
+  if(el) el.textContent = msg;
+}
+
+function collectFormData(){
+  const v = id => (document.getElementById(id)?.value ?? '').trim();
+  return {
+    hero:{
+      eyebrow:v('hero-eyebrow'), titleLine1:v('hero-title1'), titleLine2:v('hero-title2'),
+      lede:v('hero-lede'), cta1:v('hero-cta1'), cta2:v('hero-cta2')
+    },
+    services:[0,1,2].map(i => ({tag:v(`svc${i}-tag`), title:v(`svc${i}-title`), desc:v(`svc${i}-desc`)})),
+    process:[0,1,2,3].map(i => ({title:v(`proc${i}-title`), desc:v(`proc${i}-desc`)})),
+    portfolio:[0,1,2,3,4,5].map(i => ({title:v(`port${i}-title`), exif:v(`port${i}-exif`), color:safeColor(v(`port${i}-color`))})),
+    about:{
+      heading:v('about-heading'), text:v('about-text'),
+      pills:v('about-pills').split(',').map(s => s.trim()).filter(Boolean)
+    },
+    contact:{studio:v('contact-studio'), email:v('contact-email'), social:v('contact-social'), zone:v('contact-zone')}
+  };
+}
+
+async function saveAdmin(){
+  const btn = document.getElementById('adminSave');
+  if(btn) btn.disabled = true;
+  setStatus('Enregistrement…');
+  const newData = collectFormData();
+  DATA = newData;
+  document.getElementById('site-data').textContent = JSON.stringify(DATA);
+  render();
+  if(!artifactCap){
+    setStatus('Mode édition indisponible : les changements ne seront pas publiés.');
+    return;
+  }
+  try{
+    await artifactCap.publish(buildFullDocument(DATA));
+    setStatus('Enregistré ✓ — la page se recharge…');
+  }catch(err){
+    const code = err && err.code;
+    if(code === 'conflict'){
+      setStatus('Quelqu’un d’autre vient de modifier la page. Rechargez pour voir la dernière version.');
+    } else if(code === 'not_writer' || code === 'not_granted'){
+      canEditCached = false;
+      applyAdminVisibility();
+      setStatus('Vous n’avez plus les droits de modification.');
+    } else {
+      setStatus('Échec de l’enregistrement. Réessayez dans un instant.');
+    }
+    if(btn) btn.disabled = false;
+  }
+}
+
+document.body.addEventListener('click', e => {
+  if(e.target.closest('#adminFab')){ openAdmin(); }
+  else if(e.target.closest('#adminClose')){ closeAdmin(); }
+  else if(e.target.closest('#adminBackdrop')){ closeAdmin(); }
+  else if(e.target.closest('#adminCancel')){ closeAdmin(); }
+  else if(e.target.closest('#adminSave')){ saveAdmin(); }
+  else {
+    const link = e.target.closest('a[href^="#"]');
+    if(link){
+      const target = document.getElementById(link.getAttribute('href').slice(1));
+      if(target){ e.preventDefault(); target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    }
+  }
+});
+
+async function initAdmin(){
+  if(typeof claude === 'undefined' || !claude.use) return;
+  const [a, u] = await Promise.all([
+    claude.use('artifact').catch(() => null),
+    claude.use('user').catch(() => null)
+  ]);
+  if(!a || !u) return;
+  let ok = false;
+  try{ ok = await u.canEdit(); }catch(e){ ok = false; }
+  artifactCap = a;
+  canEditCached = ok;
+  applyAdminVisibility();
+}
+
+render();
+initAdmin();
+</script>
