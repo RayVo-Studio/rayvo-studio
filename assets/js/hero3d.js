@@ -200,7 +200,7 @@ function tint(material) {
   if ('envMapIntensity' in material) material.envMapIntensity = 0.2;
 }
 
-// Contenu des trois écrans : grille de projecteurs, logo + slogan, timeline.
+// Contenu des trois écrans : logo + slogan au centre, deux écrans latéraux éteints.
 function createScreens(data) {
   const make = () => {
     const canvas = document.createElement('canvas');
@@ -217,26 +217,16 @@ function createScreens(data) {
   const right = make();
   const logo = new Image();
   logo.src = data.logo;
-  const palette = ['#7b91c4', '#e8b45c', '#5ccb93', '#c47bb6', '#fcf2e7'];
 
-  const drawGrid = t => {
-    const { ctx, canvas, texture } = left;
-    ctx.fillStyle = '#05060a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    const cols = 8, rows = 5, gap = 12, pad = 22;
-    const w = (canvas.width - pad * 2 - gap * (cols - 1)) / cols;
-    const h = (canvas.height - pad * 2 - gap * (rows - 1)) / rows;
-    for (let i = 0; i < cols * rows; i++) {
-      const x = pad + (i % cols) * (w + gap);
-      const y = pad + Math.floor(i / cols) * (h + gap);
-      const level = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(t * (0.9 + (i % 7) * 0.13) + i * 1.7));
-      ctx.globalAlpha = level;
-      ctx.fillStyle = palette[i % palette.length];
-      ctx.beginPath();
-      ctx.roundRect(x, y, w, h, 6);
-      ctx.fill();
-    }
-    ctx.globalAlpha = 1;
+  // Écrans latéraux : éteints, avec le même fond sombre que l'écran central.
+  const drawBlank = screen => {
+    const { ctx, canvas, texture } = screen;
+    const W = canvas.width, H = canvas.height;
+    const bg = ctx.createRadialGradient(W / 2, H * 0.4, 20, W / 2, H * 0.4, W * 0.7);
+    bg.addColorStop(0, '#151a2b');
+    bg.addColorStop(1, '#05060a');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
     texture.needsUpdate = true;
   };
 
@@ -281,40 +271,12 @@ function createScreens(data) {
     texture.needsUpdate = true;
   };
 
-  const drawTimeline = t => {
-    const { ctx, canvas, texture } = right;
-    const W = canvas.width, H = canvas.height;
-    ctx.fillStyle = '#05060a';
-    ctx.fillRect(0, 0, W, H);
-    const rows = 6, pad = 24, gap = 12;
-    const rh = (H - pad * 2 - gap * (rows - 1)) / rows;
-    for (let r = 0; r < rows; r++) {
-      const y = pad + r * (rh + gap);
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      ctx.fillRect(pad, y, W - pad * 2, rh);
-      let x = pad + 6;
-      for (let c = 0; c < 3; c++) {
-        const cw = (W - pad * 2 - 30) * [0.3, 0.42, 0.2][(c + r) % 3];
-        ctx.fillStyle = palette[(r + c * 2) % 4];
-        ctx.fillRect(x, y + 5, cw, rh - 10);
-        x += cw + 8;
-      }
-    }
-    const px = pad + ((t / 7) % 1) * (W - pad * 2);
-    ctx.fillStyle = '#fcf2e7';
-    ctx.shadowColor = '#fcf2e7';
-    ctx.shadowBlur = 14;
-    ctx.fillRect(px - 2, pad - 8, 4, H - pad * 2 + 16);
-    ctx.shadowBlur = 0;
-    texture.needsUpdate = true;
-  };
-
   const api = {
     Screen_L: left,
     Screen_C: center,
     Screen_R: right,
-    // Grille et timeline restent fixes : seul l'écran central est animé.
-    drawStatic() { drawGrid(1.7); drawTimeline(2.9); },
+    // Seul l'écran central est animé ; les deux autres restent éteints.
+    drawStatic() { drawBlank(left); drawBlank(right); },
     draw(t) { drawBrand(t); },
   };
   // Redessine dès que la police et le logo sont prêts.
