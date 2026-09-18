@@ -1,0 +1,32 @@
+/* ============================================================
+   base.css — commun au site public ET à l'administration
+   Variables (palette RayVo), réinitialisation, typographie, boutons
+   ============================================================ */
+
+:root{
+  --bg:#0c0d13;
+  --surface:#212227;
+  --surface-2:#2b2b2a;
+  --text:#fcf2e7;
+  --muted:#a79c91;
+  --accent:#7b91c4;
+  --accent-ink:#12141c;
+  --line:rgba(252,242,231,0.14);
+  --shadow:0 1px 2px rgba(0,0,0,0.5);
+}
+*{box-sizing:border-box;}
+html,body{background:var(--bg);}
+body{color:var(--text);font-family:'Archivo',system-ui,sans-serif;line-height:1.5;padding-inline:0;margin:0;}
+a{color:inherit;}
+h1,h2,h3{font-weight:600;text-wrap:balance;margin:0;}
+h1,h2{font-family:'Fredoka',system-ui,sans-serif;font-weight:600;letter-spacing:0;}
+h3{font-family:'Archivo',sans-serif;font-weight:700;}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;}
+
+/* Boutons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:999px;font-weight:600;font-size:13px;letter-spacing:0.03em;text-transform:uppercase;text-decoration:none;border:1.5px solid transparent;cursor:pointer;transition:transform .15s ease,opacity .15s ease,background .15s ease,color .15s ease;}
+.btn:hover{transform:translateY(-1px);}
+.btn-primary{background:var(--accent);color:var(--accent-ink);}
+.btn-ghost{border-color:var(--text);color:var(--text);}
+.btn-ghost:hover{background:var(--text);color:var(--bg);}
+.btn-block{justify-content:center;}
