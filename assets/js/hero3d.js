@@ -1,10 +1,10 @@
 // Accroche : la vraie console grandMA3 en 3D (three.js). Zoom et pivot au survol.
-// Si le navigateur ne sait pas faire de 3D, la console dessinée en CSS reste affichée.
+// Sans 3D possible, l'image d'attente de la console reste affichée.
 import * as THREE from 'three';
 import { GLTFLoader } from './vendor/three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from './vendor/three/examples/jsm/environments/RoomEnvironment.js';
 
-const desk = document.querySelector('.desk[data-model]');
+const host = document.querySelector('.scene3d[data-model]');
 const hero = document.querySelector('.hero');
 // Taupe du logo RayVo (mesuré sur assets/img/logo.png) : le slogan a exactement la même couleur.
 const LOGO_COLOR = '#a79c91';
@@ -13,22 +13,16 @@ const CALM_FRAME = 4.4;
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const touchOnly = window.matchMedia('(hover: none)').matches;
 
-if (desk && hero) {
+if (host && hero) {
   init().catch(() => {});
 }
 
 async function init() {
-  const host = document.createElement('div');
-  host.className = 'scene3d';
-  host.setAttribute('aria-hidden', 'true');
-  desk.after(host);
-
   let renderer;
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
   } catch (error) {
-    host.remove();
-    return;
+    return; // pas de 3D : l'image d'attente reste affichée
   }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
@@ -80,9 +74,9 @@ async function init() {
   scene.add(deskMesh);
 
   // Écrans dessinés en 2D, projetés sur les trois dalles de la console.
-  const screens = createScreens(desk.dataset);
+  const screens = createScreens(host.dataset);
 
-  const gltf = await new GLTFLoader().loadAsync(desk.dataset.model);
+  const gltf = await new GLTFLoader().loadAsync(host.dataset.model);
   const model = gltf.scene;
   const box = new THREE.Box3().setFromObject(model);
   const center = box.getCenter(new THREE.Vector3());

@@ -22,14 +22,6 @@ if (nav) {
   syncNav();
 }
 
-// Les faisceaux s'arrêtent quand l'accroche n'est plus visible.
-const hero = document.querySelector('.hero');
-if (hero && 'IntersectionObserver' in window) {
-  new IntersectionObserver(([entry]) => {
-    hero.classList.toggle('is-offscreen', !entry.isIntersecting);
-  }).observe(hero);
-}
-
 // Apparitions au scroll : l'état caché n'existe que si le script tourne.
 if (!calm && 'IntersectionObserver' in window) {
   document.documentElement.classList.add('js');
@@ -47,25 +39,48 @@ if (!calm && 'IntersectionObserver' in window) {
   });
 }
 
-// Console 3D : zoom et pivot au survol (souris) ou au toucher (écran tactile).
-const desk = document.querySelector('.desk');
-if (desk && !calm) {
-  if (window.matchMedia('(hover: none)').matches) {
-    desk.addEventListener('click', () => desk.classList.toggle('is-zoomed'));
-  } else {
-    desk.addEventListener('mouseenter', () => desk.classList.add('is-hover'));
-    desk.addEventListener('mouseleave', () => {
-      desk.classList.remove('is-hover');
-      desk.style.removeProperty('--px');
-      desk.style.removeProperty('--py');
-    });
-    desk.addEventListener('mousemove', event => {
-      const box = desk.getBoundingClientRect();
-      desk.style.setProperty('--px', ((event.clientX - box.left) / box.width * 2 - 1).toFixed(3));
-      desk.style.setProperty('--py', ((event.clientY - box.top) / box.height * 2 - 1).toFixed(3));
-    });
+// Réalisations : chaque photo donne sa couleur dominante, qui éclaire le cadre et l'ambiance de la section au survol.
+const realisations = document.getElementById('realisations');
+document.querySelectorAll('.plate').forEach(plate => {
+  const media = plate.querySelector('.frame-media');
+  const video = plate.querySelector('video[poster]');
+  const source = media || (video && Object.assign(new Image(), { src: video.getAttribute('poster') }));
+  if (!source) return;
+
+  const paint = () => {
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = canvas.height = 12;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      ctx.drawImage(source, 0, 0, 12, 12);
+      const px = ctx.getImageData(0, 0, 12, 12).data;
+      let r = 0, g = 0, b = 0, total = 0;
+      for (let i = 0; i < px.length; i += 4) {
+        const max = Math.max(px[i], px[i + 1], px[i + 2]);
+        const min = Math.min(px[i], px[i + 1], px[i + 2]);
+        const weight = ((max - min) / 255 + 0.1) * (max / 255 + 0.05);
+        r += px[i] * weight; g += px[i + 1] * weight; b += px[i + 2] * weight; total += weight;
+      }
+      if (!total) return;
+      const lift = 190 / Math.max(r / total, g / total, b / total, 1);
+      const rgb = [r, g, b].map(v => Math.min(255, Math.round(v / total * Math.min(lift, 2.4))));
+      plate.style.setProperty('--glow', `rgb(${rgb.join(',')})`);
+    } catch (error) { /* image non lisible : on garde la lueur bleue par défaut */ }
+  };
+  if (source.complete && source.naturalWidth) paint(); else source.addEventListener('load', paint, { once: true });
+
+  if (realisations && !calm) {
+    const on = () => {
+      realisations.style.setProperty('--ambient', getComputedStyle(plate).getPropertyValue('--glow') || '#7b91c4');
+      realisations.classList.add('has-ambient');
+    };
+    const off = () => realisations.classList.remove('has-ambient');
+    plate.addEventListener('mouseenter', on);
+    plate.addEventListener('mouseleave', off);
+    plate.addEventListener('focusin', on);
+    plate.addEventListener('focusout', off);
   }
-}
+});
 
 // Lecture des vidéos : au survol sur ordinateur, dès qu'elles sont bien visibles sur écran tactile.
 const touchOnly = window.matchMedia('(hover: none)').matches;
