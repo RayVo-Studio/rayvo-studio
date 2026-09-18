@@ -114,14 +114,6 @@
 .cell:nth-child(7n){animation-delay:-0.6s;animation-duration:3s;}
 @keyframes cell{from{opacity:0.35;}to{opacity:1;}}
 
-.wheel{position:absolute;left:16px;top:14px;width:130px;height:130px;border-radius:50%;background:conic-gradient(#e27b74,#e8b45c,#e8dd5c,#5ccb93,#5cc9cb,#7b91c4,#c47bb6,#e27b74);box-shadow:inset 0 0 0 26px rgba(5,6,10,0.32);animation:hue 18s linear infinite;}
-@keyframes hue{to{filter:hue-rotate(360deg);}}
-.swatches{position:absolute;right:14px;top:14px;bottom:14px;width:34%;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;align-content:start;}
-.swatches span{height:26px;border-radius:3px;background:#7b91c4;}
-.swatches span:nth-child(3n+2){background:#e8b45c;}
-.swatches span:nth-child(3n){background:#5ccb93;}
-.swatches span:nth-child(4n){background:#c47bb6;}
-.swatches span:nth-child(5n){background:#fcf2e7;}
 
 .tracks{position:absolute;inset:12px;display:flex;flex-direction:column;gap:7px;}
 .track{flex:1;display:flex;gap:6px;border-radius:3px;background:rgba(255,255,255,0.05);padding:3px;}
@@ -132,6 +124,17 @@
 .track:nth-child(3n) .clip:nth-child(2){flex:1.6;background:#c47bb6;}
 .playhead{position:absolute;top:-4px;bottom:-4px;left:0;width:2px;background:#fcf2e7;box-shadow:0 0 8px #fcf2e7;animation:play 7s linear infinite;}
 @keyframes play{from{left:0;}to{left:100%;}}
+
+/* Écran central : logo et slogan */
+.screen.brand{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:radial-gradient(90% 90% at 50% 40%,#151a2b,#05060a 75%);}
+.brand-logo{width:150px;height:auto;position:relative;animation:brand-in 6s ease-in-out infinite;}
+.brand-slogan{position:relative;margin:0;text-align:center;font-family:'Fredoka',system-ui,sans-serif;font-weight:600;font-size:21px;line-height:1.1;letter-spacing:0.04em;text-transform:uppercase;color:#fcf2e7;}
+.brand-slogan span{display:block;animation:ignite 6s ease-in-out infinite;}
+.brand-slogan span:nth-child(2){animation-delay:0.5s;}
+.brand-sweep{position:absolute;inset:0;background:linear-gradient(100deg,transparent 35%,rgba(123,145,196,0.35) 50%,transparent 65%);transform:translateX(-100%);animation:sweep-x 6s ease-in-out infinite;}
+@keyframes brand-in{0%{opacity:0.25;}18%,100%{opacity:1;}}
+@keyframes ignite{0%{opacity:0.12;text-shadow:none;}22%{opacity:1;text-shadow:0 0 14px rgba(123,145,196,0.9);}60%,100%{opacity:1;text-shadow:0 0 6px rgba(123,145,196,0.45);}}
+@keyframes sweep-x{0%,12%{transform:translateX(-100%);}55%,100%{transform:translateX(100%);}}
 
 /* Tailles */
 @media (min-width:1500px){.desk{--k:0.78;}}
@@ -145,6 +148,6 @@
 
 .hero.is-offscreen .desk *{animation-play-state:paused;}
 @media (prefers-reduced-motion: reduce){
-  .sway,.cell,.wheel,.playhead{animation:none;}
+  .sway,.cell,.playhead,.brand-logo,.brand-slogan span,.brand-sweep{animation:none;}
   .rig{transition:none;}
 }
