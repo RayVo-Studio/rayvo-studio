@@ -108,8 +108,8 @@ async function init() {
 
   // Caméra : deux états (repos, survol) entre lesquels on glisse.
   const target = new THREE.Vector3(0, size.y * 0.42, 0);
-  const rest = { az: -30, el: 33, dist: 1, tx: 0, ty: 0 };
-  const near = { az: -14, el: 28, dist: 1, tx: -0.05, ty: -0.01 };
+  const rest = { az: -30, el: 33, dist: 1, tx: -0.11, ty: 0 };
+  const near = { az: -14, el: 28, dist: 1, tx: -0.14, ty: -0.01 };
   const now = { ...rest };
   const pointer = { x: 0, y: 0 };
   let zoomed = false;
@@ -125,8 +125,9 @@ async function init() {
     near.dist = rest.dist * 0.88;
     camera.updateProjectionMatrix();
   }
-  new ResizeObserver(() => { fit(); frame(performance.now(), true); }).observe(host);
   fit();
+  Object.assign(now, rest);
+  new ResizeObserver(() => { fit(); frame(performance.now(), true); }).observe(host);
 
   function place() {
     const az = THREE.MathUtils.degToRad(now.az + pointer.x * (zoomed ? 5 : 3) + (calm ? 0 : Math.sin(clock.elapsedTime * 0.35) * 1.6));
@@ -188,7 +189,10 @@ function tint(material) {
   if (!material.color) return;
   const { r, g, b } = material.color;
   const spread = Math.max(r, g, b) - Math.min(r, g, b);
-  if (spread < 0.06) material.color.multiplyScalar(0.14);
+  if (spread < 0.06) {
+    if (material.name === 'Chassis') material.color.setRGB(0.07, 0.072, 0.08);
+    else material.color.multiplyScalar(0.32);
+  }
   else material.emissive?.copy(material.color).multiplyScalar(0.14);
   if ('specularIntensity' in material) material.specularIntensity = 0.12;
   material.roughness = 0.92;
@@ -309,9 +313,12 @@ function createScreens(data) {
     Screen_L: left,
     Screen_C: center,
     Screen_R: right,
-    draw(t) { drawGrid(t); drawBrand(t); drawTimeline(t); },
+    // Grille et timeline restent fixes : seul l'écran central est animé.
+    drawStatic() { drawGrid(1.7); drawTimeline(2.9); },
+    draw(t) { drawBrand(t); },
   };
   // Redessine dès que la police et le logo sont prêts.
+  api.drawStatic();
   document.fonts?.ready.then(() => api.draw(0));
   logo.onload = () => api.draw(0);
   return api;
