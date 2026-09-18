@@ -47,6 +47,26 @@ if (!calm && 'IntersectionObserver' in window) {
   });
 }
 
+// Console 3D : zoom et pivot au survol (souris) ou au toucher (écran tactile).
+const desk = document.querySelector('.desk');
+if (desk && !calm) {
+  if (window.matchMedia('(hover: none)').matches) {
+    desk.addEventListener('click', () => desk.classList.toggle('is-zoomed'));
+  } else {
+    desk.addEventListener('mouseenter', () => desk.classList.add('is-hover'));
+    desk.addEventListener('mouseleave', () => {
+      desk.classList.remove('is-hover');
+      desk.style.removeProperty('--px');
+      desk.style.removeProperty('--py');
+    });
+    desk.addEventListener('mousemove', event => {
+      const box = desk.getBoundingClientRect();
+      desk.style.setProperty('--px', ((event.clientX - box.left) / box.width * 2 - 1).toFixed(3));
+      desk.style.setProperty('--py', ((event.clientY - box.top) / box.height * 2 - 1).toFixed(3));
+    });
+  }
+}
+
 // Lecture des vidéos : au survol sur ordinateur, dès qu'elles sont bien visibles sur écran tactile.
 const touchOnly = window.matchMedia('(hover: none)').matches;
 document.querySelectorAll('.video-frame').forEach(frame => {
