@@ -25,7 +25,7 @@ if (nav) {
 // Apparitions au scroll : l'état caché n'existe que si le script tourne.
 if (!calm && 'IntersectionObserver' in window) {
   document.documentElement.classList.add('js');
-  const targets = document.querySelectorAll('.sec-head, .setting, .step, .plate, .about > *, .contact-inner > *');
+  const targets = document.querySelectorAll('.sec-head, .setting, .audience, .step, .plate, .about > *, .faq > *, .contact-inner > *');
   const observer = new IntersectionObserver(entries => {
     entries.filter(entry => entry.isIntersecting).forEach((entry, i) => {
       entry.target.style.setProperty('--dl', Math.min(i, 4) * 90 + 'ms');

@@ -155,7 +155,8 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
   .setting{grid-template-columns:1fr;gap:10px;}
   .setting .tag{justify-self:start;text-align:left;margin-top:6px;}
   .process{grid-template-columns:1fr 1fr;row-gap:40px;}
-  .about,.contact-inner{grid-template-columns:1fr;}
+  .about,.contact-inner,.faq,.audiences{grid-template-columns:1fr;}
+  .faq h2{position:static;}
   .plate,.plate:nth-child(n){grid-column:1 / -1;}
   .frame{height:auto;aspect-ratio:4 / 3;}
 }
@@ -178,7 +179,7 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
 /* Matière commune : mêmes gris que la console, sections alternées, filet de lumière entre les sections */
 @property --ambient{syntax:'<color>';inherits:true;initial-value:transparent;}
 section{position:relative;}
-section:nth-of-type(2),#apropos{background:linear-gradient(180deg,#101116,#0c0d12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(255,255,255,0.04);}
+#specialites,#apropos{background:linear-gradient(180deg,#101116,#0c0d12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(255,255,255,0.04);}
 section + section::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(900px,80%);height:110px;pointer-events:none;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 65%,transparent),transparent) top / 100% 1px no-repeat,radial-gradient(50% 100% at 50% 0,color-mix(in srgb,var(--accent) 13%,transparent),transparent) top / 100% 100% no-repeat;}
 #realisations{isolation:isolate;--ambient:transparent;transition:--ambient .9s ease;}
 #realisations::before{content:"";position:absolute;inset:0 -5%;z-index:-1;pointer-events:none;background:radial-gradient(60% 46% at 50% 45%,color-mix(in srgb,var(--ambient) 32%,transparent),transparent 72%);opacity:0;transition:opacity .9s ease;}
@@ -200,3 +201,17 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 .notfound h1{font-size:clamp(34px,6vw,64px);line-height:1.05;margin-top:28px;}
 .notfound p{margin:0;max-width:46ch;color:var(--muted);font-size:18px;}
 .notfound .btn{margin-top:8px;}
+
+/* Festivals et clubs, questions fréquentes */
+.audiences{display:grid;grid-template-columns:1fr 1fr;gap:clamp(32px,6vw,96px);}
+.audience{position:relative;padding-top:30px;}
+.audience::before{content:"";position:absolute;inset:0 0 auto;height:1px;background:var(--line);}
+.audience h3{font-family:'Fredoka',system-ui,sans-serif;font-weight:500;font-size:clamp(26px,3vw,38px);line-height:1.1;}
+.audience p{margin:18px 0 0;max-width:54ch;color:var(--muted);font-size:clamp(17px,1.5vw,19px);}
+.faq{display:grid;grid-template-columns:5fr 7fr;gap:clamp(32px,7vw,112px);align-items:start;}
+.faq h2{font-size:clamp(32px,4.2vw,54px);line-height:1.08;position:sticky;top:120px;}
+.faq-item{padding-block:28px;border-top:1px solid var(--line);}
+.faq-item:last-child{border-bottom:1px solid var(--line);}
+.faq-item h3{font-family:'Fredoka',system-ui,sans-serif;font-weight:500;font-size:clamp(20px,2vw,25px);line-height:1.25;}
+.faq-item p{margin:12px 0 0;max-width:62ch;color:var(--muted);font-size:17px;}
+.faq-item a{display:inline-block;padding-block:12px;margin-block:-12px;color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1.5px;text-underline-offset:4px;}
