@@ -30,10 +30,12 @@ body{font-size:17px;line-height:1.6;}
 /* Accroche : un show de lumière */
 .hero{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100svh - 60px);display:flex;flex-direction:column;justify-content:flex-end;}
 .stage{position:absolute;inset:0;z-index:-1;pointer-events:none;}
+.hero-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 65%;}
+.hero-scrim{position:absolute;inset:0;background:linear-gradient(90deg, rgba(5,5,5,0.55) 0%, transparent 65%),linear-gradient(180deg, rgba(5,5,5,0.4) 0%, rgba(5,5,5,0.62) 55%, var(--bg) 100%);}
 .stage::before{content:"";position:absolute;inset:auto 0 0;height:55%;background:radial-gradient(70% 100% at 72% 100%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 70%);}
 .stage::after{content:"";position:absolute;inset:auto 0 0;height:22%;background:linear-gradient(180deg,transparent,var(--bg));}
 .beam{
-  --s:12deg;--o:60%;--c:var(--accent);
+  --s:12deg;--o:48%;--c:var(--accent);
   position:absolute;top:-6%;height:118%;aspect-ratio:0.72;left:var(--x);
   transform:translateX(-50%) rotate(var(--r1));transform-origin:50% 0;
   background:conic-gradient(from calc(180deg - var(--s)) at 50% 0, transparent 0deg, color-mix(in srgb, var(--c) var(--o), transparent) var(--s), transparent calc(var(--s) * 2), transparent 360deg);
@@ -173,6 +175,9 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
   .navlinks .nav-cta{margin-left:4px;}
   .process{grid-template-columns:1fr;}
   .beam:nth-child(n+4){display:none;}
+  /* recadre la photo pour écarter le titre incrusté dans l'image, qui passerait sous le texte */
+  .hero-bg{top:auto;bottom:0;height:145%;}
+  .hero-scrim{background:linear-gradient(180deg, rgba(5,5,5,0.62) 0%, rgba(5,5,5,0.78) 55%, var(--bg) 100%);}
   .beam:nth-child(1){--x:72%;}
   .beam:nth-child(2){--x:38%;}
   .beam:nth-child(3){--x:96%;}
