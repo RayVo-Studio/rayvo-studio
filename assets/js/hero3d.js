@@ -6,6 +6,8 @@ import { RoomEnvironment } from './vendor/three/examples/jsm/environments/RoomEn
 
 const desk = document.querySelector('.desk[data-model]');
 const hero = document.querySelector('.hero');
+// Taupe du logo RayVo (mesuré sur assets/img/logo.png) : le slogan a exactement la même couleur.
+const LOGO_COLOR = '#a79c91';
 // Image fixe (logo allumé) pour ceux qui ont réduit les animations.
 const CALM_FRAME = 4.4;
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -267,7 +269,7 @@ function createScreens(data) {
       ctx.shadowColor = 'rgba(123,145,196,0.95)';
       ctx.shadowBlur = cycle < 0.7 ? 26 * on : 8 * on;
       ctx.globalAlpha = 0.12 + 0.88 * on;
-      ctx.fillStyle = '#fcf2e7';
+      ctx.fillStyle = LOGO_COLOR;
       ctx.fillText(line, W / 2, H * 0.6 + i * 74);
     });
     ctx.shadowBlur = 0;
