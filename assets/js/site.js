@@ -47,10 +47,21 @@ if (!calm && 'IntersectionObserver' in window) {
   });
 }
 
-// Lecture des vidéos au survol.
+// Lecture des vidéos : au survol sur ordinateur, dès qu'elles sont bien visibles sur écran tactile.
+const touchOnly = window.matchMedia('(hover: none)').matches;
 document.querySelectorAll('.video-frame').forEach(frame => {
   const video = frame.querySelector('video');
   if (!video) return;
+
+  if (touchOnly) {
+    if (calm || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(([entry]) => {
+      frame.classList.toggle('is-playing', entry.isIntersecting);
+      if (entry.isIntersecting) video.play().catch(() => {});
+      else video.pause();
+    }, { threshold: 0.6 }).observe(frame);
+    return;
+  }
 
   frame.addEventListener('mouseenter', () => {
     frame.classList.add('is-playing');
