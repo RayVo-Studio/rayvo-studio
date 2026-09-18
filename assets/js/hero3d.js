@@ -37,12 +37,12 @@ async function init() {
   const scene = new THREE.Scene();
   const pmrem = new THREE.PMREMGenerator(renderer);
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
-  scene.environmentIntensity = 0.28;
+  scene.environmentIntensity = 0.12;
 
   const camera = new THREE.PerspectiveCamera(26, 1, 0.05, 30);
 
   // Lumières : une principale un peu froide, un contre-jour bleu de marque, l'éclat des écrans.
-  const key = new THREE.DirectionalLight(0xdfe6ff, 2.0);
+  const key = new THREE.DirectionalLight(0xdfe6ff, 1.5);
   key.position.set(1.4, 2.6, 1.9);
   key.castShadow = true;
   key.shadow.mapSize.set(2048, 2048);
@@ -50,10 +50,10 @@ async function init() {
   key.shadow.bias = -0.0004;
   key.shadow.radius = 5;
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x7b91c4, 1.3);
+  const rim = new THREE.DirectionalLight(0xb9c4e6, 0.55);
   rim.position.set(-2.2, 1.6, -1.8);
   scene.add(rim);
-  const glow = new THREE.PointLight(0x7b91c4, 1.4, 2.4, 1.6);
+  const glow = new THREE.PointLight(0x7b91c4, 0.7, 2.2, 1.8);
   scene.add(glow);
 
   // Bureau : plateau sombre qui s'efface sur les bords.
@@ -108,8 +108,8 @@ async function init() {
 
   // Caméra : deux états (repos, survol) entre lesquels on glisse.
   const target = new THREE.Vector3(0, size.y * 0.42, 0);
-  const rest = { az: 30, el: 33, dist: 1, tx: 0, ty: 0 };
-  const near = { az: 12, el: 25, dist: 1, tx: -0.15, ty: -0.03 };
+  const rest = { az: -30, el: 33, dist: 1, tx: 0, ty: 0 };
+  const near = { az: -14, el: 28, dist: 1, tx: -0.05, ty: -0.01 };
   const now = { ...rest };
   const pointer = { x: 0, y: 0 };
   let zoomed = false;
@@ -120,9 +120,9 @@ async function init() {
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
     const hfov = 2 * Math.atan(Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2) * camera.aspect);
-    const wide = (size.x * 0.5 + size.z * 0.45) * 0.92;
+    const wide = (size.x * 0.5 + size.z * 0.45) * 1.14;
     rest.dist = Math.max(wide / Math.tan(hfov / 2), 1.6);
-    near.dist = rest.dist * 0.76;
+    near.dist = rest.dist * 0.88;
     camera.updateProjectionMatrix();
   }
   new ResizeObserver(() => { fit(); frame(performance.now(), true); }).observe(host);
@@ -188,12 +188,12 @@ function tint(material) {
   if (!material.color) return;
   const { r, g, b } = material.color;
   const spread = Math.max(r, g, b) - Math.min(r, g, b);
-  if (spread < 0.06) material.color.multiplyScalar(0.27);
-  else material.emissive?.copy(material.color).multiplyScalar(0.18);
-  if ('specularIntensity' in material) material.specularIntensity = 0.5;
-  material.roughness = 0.6;
+  if (spread < 0.06) material.color.multiplyScalar(0.14);
+  else material.emissive?.copy(material.color).multiplyScalar(0.14);
+  if ('specularIntensity' in material) material.specularIntensity = 0.12;
+  material.roughness = 0.92;
   material.metalness = 0.05;
-  if ('envMapIntensity' in material) material.envMapIntensity = 0.8;
+  if ('envMapIntensity' in material) material.envMapIntensity = 0.2;
 }
 
 // Contenu des trois écrans : grille de projecteurs, logo + slogan, timeline.
