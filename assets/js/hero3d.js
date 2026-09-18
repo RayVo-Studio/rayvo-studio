@@ -6,6 +6,8 @@ import { RoomEnvironment } from './vendor/three/examples/jsm/environments/RoomEn
 
 const desk = document.querySelector('.desk[data-model]');
 const hero = document.querySelector('.hero');
+// Image fixe (logo allumé) pour ceux qui ont réduit les animations.
+const CALM_FRAME = 4.4;
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const touchOnly = window.matchMedia('(hover: none)').matches;
 
@@ -152,7 +154,7 @@ async function init() {
     for (const key of ['az', 'el', 'dist', 'tx', 'ty']) now[key] += (goal[key] - now[key]) * k;
     if (time - last > 32 || once) {
       last = time;
-      screens.draw(clock.elapsedTime);
+      screens.draw(calm ? CALM_FRAME : clock.elapsedTime);
     }
     place();
     renderer.render(scene, camera);
@@ -218,69 +220,76 @@ function createScreens(data) {
   const logo = new Image();
   logo.src = data.logo;
 
-  // Écrans latéraux : éteints, avec le même fond sombre que l'écran central.
-  const drawBlank = screen => {
-    const { ctx, canvas, texture } = screen;
+  // Un seul reflet traverse les trois écrans, de gauche à droite, puis le logo et le slogan s'allument.
+  const ramp = (x, from, to) => Math.min(1, Math.max(0, (x - from) / (to - from)));
+  const CYCLE = 6;
+
+  const background = screen => {
+    const { ctx, canvas } = screen;
     const W = canvas.width, H = canvas.height;
     const bg = ctx.createRadialGradient(W / 2, H * 0.4, 20, W / 2, H * 0.4, W * 0.7);
     bg.addColorStop(0, '#151a2b');
     bg.addColorStop(1, '#05060a');
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
-    texture.needsUpdate = true;
   };
 
-  const drawBrand = t => {
-    const { ctx, canvas, texture } = center;
+  // position : abscisse du reflet en largeurs d'écran (0 = bord gauche de l'écran de gauche, 3 = bord droit de celui de droite).
+  const sweep = (screen, index, position) => {
+    const { ctx, canvas } = screen;
     const W = canvas.width, H = canvas.height;
-    const bg = ctx.createRadialGradient(W / 2, H * 0.4, 20, W / 2, H * 0.4, W * 0.7);
-    bg.addColorStop(0, '#151a2b');
-    bg.addColorStop(1, '#05060a');
-    ctx.fillStyle = bg;
+    const x = (position - index) * W;
+    const band = ctx.createLinearGradient(x - 130, 0, x + 130, 0);
+    band.addColorStop(0, 'rgba(123,145,196,0)');
+    band.addColorStop(0.5, 'rgba(123,145,196,0.34)');
+    band.addColorStop(1, 'rgba(123,145,196,0)');
+    ctx.fillStyle = band;
     ctx.fillRect(0, 0, W, H);
-    const cycle = (t % 6) / 6;
-    const rise = Math.min(1, cycle / 0.2);
+  };
+
+  const drawBrand = (t, cycle) => {
+    const { ctx, canvas } = center;
+    const W = canvas.width, H = canvas.height;
+    const fadeOut = 1 - ramp(cycle, 0.88, 1);
+    const lit = ramp(cycle, 0.28, 0.4) * fadeOut;
     if (logo.complete && logo.naturalWidth) {
       const lw = W * 0.5, lh = lw * logo.naturalHeight / logo.naturalWidth;
-      ctx.globalAlpha = 0.25 + 0.75 * rise;
+      ctx.globalAlpha = 0.25 + 0.75 * lit;
       ctx.drawImage(logo, (W - lw) / 2, H * 0.14, lw, lh);
       ctx.globalAlpha = 1;
     }
-    const lines = [data.line1, data.line2].filter(Boolean).map(s => s.toUpperCase());
+    const lines = [data.line1, data.line2].filter(Boolean).map(text => text.toUpperCase());
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.font = '600 64px Fredoka, system-ui, sans-serif';
     lines.forEach((line, i) => {
-      const on = Math.min(1, Math.max(0, (cycle - 0.08 - i * 0.08) / 0.16));
-      const glowAmount = cycle < 0.4 ? 26 * on : 8;
+      const on = ramp(cycle, 0.3 + i * 0.06, 0.42 + i * 0.06) * fadeOut;
       ctx.shadowColor = 'rgba(123,145,196,0.95)';
-      ctx.shadowBlur = glowAmount;
+      ctx.shadowBlur = cycle < 0.7 ? 26 * on : 8 * on;
       ctx.globalAlpha = 0.12 + 0.88 * on;
       ctx.fillStyle = '#fcf2e7';
       ctx.fillText(line, W / 2, H * 0.6 + i * 74);
     });
     ctx.shadowBlur = 0;
     ctx.globalAlpha = 1;
-    const sweepX = -W * 0.3 + (W * 1.6) * Math.min(1, Math.max(0, (cycle - 0.1) / 0.5));
-    const sweep = ctx.createLinearGradient(sweepX - 90, 0, sweepX + 90, 0);
-    sweep.addColorStop(0, 'rgba(123,145,196,0)');
-    sweep.addColorStop(0.5, 'rgba(123,145,196,0.28)');
-    sweep.addColorStop(1, 'rgba(123,145,196,0)');
-    ctx.fillStyle = sweep;
-    ctx.fillRect(0, 0, W, H);
-    texture.needsUpdate = true;
   };
 
   const api = {
     Screen_L: left,
     Screen_C: center,
     Screen_R: right,
-    // Seul l'écran central est animé ; les deux autres restent éteints.
-    drawStatic() { drawBlank(left); drawBlank(right); },
-    draw(t) { drawBrand(t); },
+    draw(t) {
+      const cycle = (t % CYCLE) / CYCLE;
+      const position = -0.3 + ramp(cycle, 0, 0.75) * 3.6;
+      [left, center, right].forEach((screen, index) => {
+        background(screen);
+        if (index === 1) drawBrand(t, cycle);
+        sweep(screen, index, position);
+        screen.texture.needsUpdate = true;
+      });
+    },
   };
   // Redessine dès que la police et le logo sont prêts.
-  api.drawStatic();
   document.fonts?.ready.then(() => api.draw(0));
   logo.onload = () => api.draw(0);
   return api;
