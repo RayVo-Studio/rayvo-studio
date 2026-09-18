@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rayvo-studio.github.io/rayvo-studio/sitemap.xml

@@ -109,3 +109,13 @@ document.querySelectorAll('.video-frame').forEach(frame => {
     video.pause();
   });
 });
+
+// Console 3D : chargée après le reste de la page (moteur 3D et modèle pèsent environ 3 Mo),
+// pour ne pas retarder l'affichage ni le premier contenu que voit Google.
+const scene = document.querySelector('.scene3d[data-module]');
+if (scene) {
+  const moduleUrl = new URL(scene.dataset.module, document.baseURI).href; // un import dynamique exige une adresse complète
+  const loadScene = () => import(moduleUrl).catch(() => {});
+  const whenIdle = () => ('requestIdleCallback' in window ? requestIdleCallback(loadScene, { timeout: 2500 }) : setTimeout(loadScene, 300));
+  if (document.readyState === 'complete') whenIdle(); else window.addEventListener('load', whenIdle, { once: true });
+}
