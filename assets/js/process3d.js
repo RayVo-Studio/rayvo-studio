@@ -45,14 +45,12 @@ async function init() {
       el, canvas, ctx: canvas.getContext('2d'), scene,
       camera: new THREE.PerspectiveCamera(28, 1, 0.05, 30),
       build: builders[i % builders.length], api: null,
-      hover: 0, want: 0, pointer: { x: 0, y: 0 }, visible: false, ready: false, w: 0, h: 0,
+      hover: 0, want: 0, time: 0, stamp: performance.now(), pointer: { x: 0, y: 0 }, visible: false, ready: false, w: 0, h: 0,
     };
   });
 
-  const clock = new THREE.Clock();
   let raf = 0;
   let last = 0;
-  let time = 0;
 
   function size(item) {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -66,11 +64,16 @@ async function init() {
     }
   }
 
-  function draw(item, t, dt) {
+  // Chaque vignette a sa propre horloge : le survol accélère le temps de façon continue (pas de saut de phase).
+  function draw(item, fixed) {
     if (!item.api) return;
     size(item);
+    const now = performance.now();
+    const dt = Math.min((now - item.stamp) / 1000, 0.1);
+    item.stamp = now;
     item.hover += (item.want - item.hover) * (calm ? 1 : 1 - Math.exp(-dt * 4));
-    item.api.update(t, dt, item.hover, item.pointer, item.camera);
+    item.time = fixed ?? item.time + dt * (1 + item.hover * 1.6);
+    item.api.update(item.time, dt, item.hover, item.pointer, item.camera);
     renderer.setSize(item.w, item.h, false);
     renderer.render(item.scene, item.camera);
     item.ctx.clearRect(0, 0, item.w, item.h);
@@ -80,12 +83,10 @@ async function init() {
 
   function frame(now) {
     raf = 0;
-    const dt = Math.min(clock.getDelta(), 0.1);
-    time += dt;
     const anyHover = items.some(item => item.want > 0 || item.hover > 0.01);
     if (anyHover || now - last > 30) {
       last = now;
-      items.forEach(item => { if (item.visible) draw(item, time, dt); });
+      items.forEach(item => { if (item.visible) draw(item); });
     }
     if (items.some(item => item.visible) && !document.hidden) raf = requestAnimationFrame(frame);
   }
@@ -93,23 +94,23 @@ async function init() {
   items.forEach(async item => {
     try { item.api = await item.build(item.scene, kit, root.dataset); } catch (error) { console.warn('process3d', error); return; }
     item.api.frameCamera(item.camera);
-    if (item.visible) { draw(item, time || CALM_TIME, 0.016); start(); }
+    if (item.visible) { draw(item, calm ? CALM_TIME : undefined); start(); }
   });
 
-  function start() { if (!raf && !calm && !document.hidden) { clock.getDelta(); raf = requestAnimationFrame(frame); } }
+  function start() { if (!raf && !calm && !document.hidden) { items.forEach(item => { item.stamp = performance.now(); }); raf = requestAnimationFrame(frame); } }
 
   const watcher = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       const item = items.find(it => it.el === entry.target);
       if (!item) return;
       item.visible = entry.isIntersecting;
-      if (item.visible && calm) draw(item, CALM_TIME, 0.016);
+      if (item.visible) { item.stamp = performance.now(); if (calm) draw(item, CALM_TIME); }
     });
     start();
   }, { rootMargin: '80px' });
   items.forEach(item => watcher.observe(item.el));
   document.addEventListener('visibilitychange', start);
-  new ResizeObserver(() => items.forEach(item => { if (item.visible) draw(item, time || CALM_TIME, 0.016); })).observe(root);
+  new ResizeObserver(() => items.forEach(item => { if (item.visible) draw(item, calm ? CALM_TIME : undefined); })).observe(root);
 
   if (calm) return;
 
@@ -464,7 +465,7 @@ function buildPark(scene, kit) {
   return {
     frameCamera: framer(0.95, 0.5, 0.2, 0.3),
     update(t, dt, hover, pointer, camera) {
-      const s = t * (1 + hover * 1.4);
+      const s = t;
       pin.position.set(0.02, 0.3 + Math.sin(s * 1.6) * 0.03 + hover * 0.07, 0.05);
       pin.rotation.y = s * 0.9;
       const pulse = (s * 0.8) % 1;
@@ -541,7 +542,7 @@ function buildPlan(scene) {
     for (let i = 0; i < n; i += 1) {
       const x = 152 + i * 66;
       const y = 214;
-      const sway = Math.sin(t * (0.8 + hover * 1.5) + i * 0.9) * (34 + hover * 30);
+      const sway = Math.sin(t * 0.8 + i * 0.9) * (34 + hover * 30);
       const tx = x + sway;
       const ty = 470;
       const on = i % 2 ? '#7b91c4' : '#fcf2e7';
@@ -568,7 +569,7 @@ function buildPlan(scene) {
     // rampes au sol
     for (let i = 0; i < 5; i += 1) {
       const x = 190 + i * 96;
-      const pulse = 0.5 + 0.5 * Math.sin(t * (1.4 + hover) + i);
+      const pulse = 0.5 + 0.5 * Math.sin(t * 1.4 + i);
       cx.fillStyle = `rgba(123,145,196,${0.4 + pulse * 0.5})`;
       cx.fillRect(x - 15, 536, 30, 12);
       cx.strokeStyle = '#fcf2e7'; cx.lineWidth = 1; cx.strokeRect(x - 15, 536, 30, 12);
@@ -753,7 +754,7 @@ function buildFestival(scene, kit) {
   return {
     frameCamera: framer(0.98, 0.62, 0.5, 0.3),
     update(t, dt, hover, pointer, camera) {
-      const s = t * (1 + hover * 1.8);
+      const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
       beams.forEach(b => {
         const spread = (b.i - 2.5) * (0.16 + 0.1 * Math.sin(s * 0.5));
