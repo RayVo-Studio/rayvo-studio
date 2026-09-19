@@ -812,13 +812,14 @@ function backdrop(stops) {
 }
 
 // Vue depuis le public : la caméra est à hauteur de tête, elle dérive doucement et avance au survol.
-function insideView(camera, base, look, t, hover, pointer) {
+// steady : vue de l'exploitant, la console reste toujours centrée (pas de dérive latérale, avance très mesurée).
+function insideView(camera, base, look, t, hover, pointer, steady = false) {
   camera.position.set(
-    base.x + Math.sin(t * 0.21) * 0.1 + pointer.x * 0.07,
-    base.y + Math.sin(t * 0.9) * 0.004 + hover * 0.018,
-    base.z - hover * 0.16,
+    steady ? base.x : base.x + Math.sin(t * 0.21) * 0.1 + pointer.x * 0.07,
+    base.y + Math.sin(t * 0.9) * 0.004 + (steady ? 0 : hover * 0.018),
+    base.z - hover * (steady ? 0.035 : 0.16),
   );
-  camera.lookAt(look.x + pointer.x * 0.14 + Math.sin(t * 0.17) * 0.05, look.y - pointer.y * 0.06, look.z);
+  camera.lookAt(steady ? look.x : look.x + pointer.x * 0.14 + Math.sin(t * 0.17) * 0.05, look.y - pointer.y * (steady ? 0.02 : 0.06), look.z);
 }
 
 // Barre de LED lumineuse (mur, plafond, contour d'estrade) : couleur changée à chaque image.
@@ -1128,7 +1129,7 @@ async function buildClub(scene, kit, data, opts = {}) {
     lamp.position.set(0, 0.2, 1.85);
     scene.add(lamp);
   }
-  const base = op ? new THREE.Vector3(0, 0.21, 2.0) : new THREE.Vector3(0, 0.2, 1.85);
+  const base = op ? new THREE.Vector3(0, 0.21, 2.18) : new THREE.Vector3(0, 0.2, 1.85);
   const look = op ? new THREE.Vector3(0, 0.14, -0.8) : new THREE.Vector3(0, 0.48, -1.0);
 
   return {
@@ -1173,7 +1174,7 @@ async function buildClub(scene, kit, data, opts = {}) {
       });
       led.paint(s);
       crowd.update(s, hover);
-      insideView(camera, base, look, t, hover, pointer);
+      insideView(camera, base, look, t, hover, pointer, op);
     },
   };
 }
