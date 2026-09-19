@@ -33,7 +33,7 @@ async function init() {
     park: buildPark,
     plan: buildPlan,
     console: buildConsole,
-    stage: buildFestival,
+    stage: (scene, kitPack, data) => buildClub(scene, kitPack, data, { operator: true }),
     festival: buildFestivalNight,
     club: buildClub,
   };
@@ -615,19 +615,17 @@ function buildPlan(scene) {
 }
 
 // 03 Programmation : la vraie console grandMA3, écrans éteints comme dans l'accroche.
-async function buildConsole(scene, kit, data) {
-  const world = new THREE.Group();
-  scene.add(world);
-  world.add(floor(kit, 'desk', 1.0));
-  const gltf = await new GLTFLoader().loadAsync(data.model);
-  const model = gltf.scene;
+// La vraie console grandMA3 (modèle fourni) : téléchargée une seule fois, écrans éteints, teintée comme dans l'accroche.
+let consoleModel;
+async function makeConsole(url, width) {
+  consoleModel ||= new GLTFLoader().loadAsync(url);
+  const model = (await consoleModel).scene.clone(true);
   const box = new THREE.Box3().setFromObject(model);
   const center = box.getCenter(new THREE.Vector3());
   model.position.set(-center.x, -box.min.y, -center.z);
   const pad = new THREE.Group();
   pad.add(model);
-  pad.scale.setScalar(1.3 / (box.max.x - box.min.x));
-  world.add(pad);
+  pad.scale.setScalar(width / (box.max.x - box.min.x));
 
   const dark = document.createElement('canvas');
   dark.width = 256; dark.height = 176;
@@ -640,7 +638,6 @@ async function buildConsole(scene, kit, data) {
   screenTex.colorSpace = THREE.SRGBColorSpace;
   screenTex.flipY = false;
 
-  const seen = new Set();
   model.traverse(node => {
     if (!node.isMesh) return;
     if (['Screen_L', 'Screen_C', 'Screen_R'].includes(node.name)) {
@@ -648,8 +645,8 @@ async function buildConsole(scene, kit, data) {
       return;
     }
     (Array.isArray(node.material) ? node.material : [node.material]).forEach(m => {
-      if (seen.has(m) || !m.color) return;
-      seen.add(m);
+      if (m.userData.tinted || !m.color) return; // matériaux partagés entre les copies : on ne les fonce qu'une fois
+      m.userData.tinted = true;
       const { r, g: gr, b } = m.color;
       if (Math.max(r, gr, b) - Math.min(r, gr, b) < 0.06) {
         if (m.name === 'Chassis') m.color.setRGB(0.07, 0.072, 0.08); else m.color.multiplyScalar(0.32);
@@ -659,6 +656,14 @@ async function buildConsole(scene, kit, data) {
       m.metalness = 0.05;
     });
   });
+  return pad;
+}
+
+async function buildConsole(scene, kit, data) {
+  const world = new THREE.Group();
+  scene.add(world);
+  world.add(floor(kit, 'desk', 1.0));
+  world.add(await makeConsole(data.model, 1.3));
   const glow = new THREE.PointLight(ACCENT, 0.6, 2.2, 1.8);
   glow.position.set(0, 0.5, -0.1);
   scene.add(glow);
@@ -752,124 +757,6 @@ function ledWall(w, h) {
         x.fillRect(0, (i + 0.2) * c.height / rows, c.width * (0.2 + wv * 0.8), c.height / rows * 0.62);
       }
       tex.needsUpdate = true;
-    },
-  };
-}
-
-// 04 Exploitation : une scène de festival, structure de toit, mur LED, enceintes, lyres BEAM, par LED, blinders et public.
-function buildFestival(scene, kit) {
-  const world = new THREE.Group();
-  scene.add(world);
-  world.add(floor(kit, 'desk', 1.2));
-
-  const deck = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.1, 0.62), kit.dark);
-  deck.position.set(0, 0.05, -0.12);
-  world.add(deck);
-
-  const led = ledWall(1.0, 0.44);
-  led.mesh.position.set(0, 0.42, -0.37);
-  world.add(led.mesh);
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(1.04, 0.48, 0.02), kit.dark);
-  frame.position.set(0, 0.42, -0.385);
-  world.add(frame);
-
-  // Structure de toit : poteaux, trois poutres et deux latérales.
-  const roofY = 0.98;
-  [[-0.66, -0.4], [0.66, -0.4], [-0.66, 0.16], [0.66, 0.16]].forEach(([x, z]) => {
-    const post = truss(kit, roofY, 0.035);
-    post.rotation.z = Math.PI / 2;
-    post.position.set(x, roofY / 2, z);
-    world.add(post);
-  });
-  [-0.4, -0.12, 0.16].forEach(z => { const b = truss(kit, 1.36, 0.035); b.position.set(0, roofY, z); world.add(b); });
-  [-0.66, 0.66].forEach(x => { const b = truss(kit, 0.56, 0.035); b.rotation.y = Math.PI / 2; b.position.set(x, roofY, -0.12); world.add(b); });
-
-  // Piles d'enceintes de chaque côté.
-  [-0.8, 0.8].forEach(x => {
-    for (let k = 0; k < 6; k += 1) {
-      const cab = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.085, 0.13), kit.matte);
-      cab.position.set(x, 0.85 - k * 0.09, 0.02);
-      cab.rotation.x = 0.035 * k;
-      world.add(cab);
-    }
-  });
-
-  // Poutre avant : six lyres BEAM qui balaient en éventail.
-  const beams = [-0.6, -0.36, -0.12, 0.12, 0.36, 0.6].map((x, i) => {
-    const f = beamFixture(kit);
-    f.root.position.set(x, roofY - 0.035, 0.16);
-    world.add(f.root);
-    return { ...f, i };
-  });
-  // Poutre du milieu : quatre par LED en lavage.
-  const pars = [-0.5, -0.17, 0.17, 0.5].map((x, i) => {
-    const f = ledPar(kit);
-    f.root.position.set(x, roofY - 0.06, -0.12);
-    f.holder.rotation.x = 0.3;
-    world.add(f.root);
-    return { ...f, i };
-  });
-  // Poutre arrière : quatre blinders.
-  const blinders = [-0.45, -0.15, 0.15, 0.45].map(x => {
-    const b = blinder(kit);
-    b.root.position.set(x, roofY - 0.035, -0.4);
-    world.add(b.root);
-    return b;
-  });
-  // Au sol : cinq par LED en contre-jour, faisceaux vers le ciel.
-  const floorPars = [-0.56, -0.28, 0, 0.28, 0.56].map((x, i) => {
-    const f = ledPar(kit, true);
-    f.root.position.set(x, 0.14, -0.3);
-    world.add(f.root);
-    return { ...f, i };
-  });
-
-  const crowd = makeCrowd({ count: 46, x0: -0.75, x1: 0.75, z0: 0.42, z1: 0.97, seed: 11 });
-  world.add(crowd.group);
-  const tmp = new THREE.Color();
-  // Brume lumineuse au-dessus du public : la lumière des projecteurs s'y diffuse.
-  const haze = glowSprite(kit, ACCENT, 1.7);
-  haze.position.set(0, 0.5, 0.35);
-  haze.material.opacity = 0.32;
-  world.add(haze);
-
-  return {
-    frameCamera: framer(0.98, 0.62, 0.5, 0.3),
-    update(t, dt, hover, pointer, camera) {
-      const s = t;
-      const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
-      beams.forEach(b => {
-        const m = mirror(b.i, beams.length);
-        b.tilt.rotation.z = m.d * (0.16 + 0.1 * Math.sin(s * 0.5)) + m.sgn * Math.sin(s * 0.9 + m.k * 0.8) * (0.25 + hover * 0.25);
-        b.tilt.rotation.x = 0.42 + Math.sin(s * 0.75 + m.k * 1.3) * (0.4 + hover * 0.25);
-        b.root.rotation.y = m.sgn * Math.sin(s * 0.4 + m.k) * 0.25;
-      });
-      pars.forEach(p => {
-        const m = mirror(p.i, pars.length);
-        showColor(s * 0.45 + m.k * 0.7, tmp);
-        p.mat.color.copy(tmp);
-        tintBeam(p.wash, tmp);
-        p.glare.material.color.copy(tmp);
-        p.holder.rotation.x = 0.3 + Math.sin(s * 0.6 + m.k) * 0.22;
-        p.holder.rotation.z = m.sgn * Math.cos(s * 0.5 + m.k * 1.4) * 0.25;
-      });
-      floorPars.forEach(p => {
-        showColor(s * 0.45 + mirror(p.i, floorPars.length).k * 0.7 + 2, tmp);
-        p.mat.color.copy(tmp);
-        tintBeam(p.wash, tmp);
-        p.glare.material.color.copy(tmp);
-      });
-      blinders.forEach(b => {
-        const c = 0.25 + beat * 0.75;
-        b.cells.forEach(cell => cell.material.color.setScalar(c));
-        b.glare.material.opacity = 0.2 + beat * 0.8;
-      });
-      led.paint(s);
-      showColor(s * 0.3, tmp);
-      haze.material.color.copy(tmp);
-      haze.material.opacity = 0.2 + beat * 0.16;
-      crowd.update(s, hover);
-      orbit(camera, Math.sin(t * 0.3) * 20, 12, camera.userData.dist, hover, pointer);
     },
   };
 }
@@ -1071,7 +958,8 @@ function buildFestivalNight(scene, kit) {
 }
 
 // Club vu depuis la piste : salle noire, murs de LED, cabine DJ sous un grand écran, lyres, boule à facettes, stroboscope, foule.
-function buildClub(scene, kit) {
+async function buildClub(scene, kit, data, opts = {}) {
+  const op = Boolean(opts.operator);
   scene.background = backdrop(['#040407', '#0a0714', '#150c22']);
   scene.fog = new THREE.FogExp2(0x0c0818, 0.3);
   const world = new THREE.Group();
@@ -1194,8 +1082,18 @@ function buildClub(scene, kit) {
   floorLight.position.set(0, 0.7, 0.3);
   scene.add(floorLight);
   const tmp = new THREE.Color();
-  const base = new THREE.Vector3(0, 0.2, 1.85);
-  const look = new THREE.Vector3(0, 0.48, -1.0);
+  // Vue de l'exploitant : on est derrière la console grandMA3 au fond de la salle, les écrans face à nous.
+  let pult = null;
+  if (op) {
+    pult = await makeConsole(data.model, 0.5);
+    pult.position.set(0, 0, 1.36);
+    world.add(pult);
+    const lamp = new THREE.PointLight(0xa9bcff, 1.1, 1.6, 1.5);
+    lamp.position.set(0, 0.45, 1.55);
+    scene.add(lamp);
+  }
+  const base = op ? new THREE.Vector3(0, 0.5, 2.0) : new THREE.Vector3(0, 0.2, 1.85);
+  const look = op ? new THREE.Vector3(0, -0.1, -0.8) : new THREE.Vector3(0, 0.48, -1.0);
 
   return {
     frameCamera(camera) { camera.fov = 52; camera.updateProjectionMatrix(); },
