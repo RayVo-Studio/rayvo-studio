@@ -362,21 +362,21 @@ function blinder(kit) {
 }
 
 // Cadre la caméra sur un objet de demi-largeur w et demi-hauteur h, centré à la hauteur cy.
-function framer(w, h, cy, depth = 0.4) {
+function framer(w, h, cy, depth = 0.4, pad = 0.95) {
   return camera => {
     const vfov = THREE.MathUtils.degToRad(camera.fov) / 2;
     const hfov = Math.atan(Math.tan(vfov) * camera.aspect);
-    camera.userData.dist = Math.max(h / Math.tan(vfov), w / Math.tan(hfov)) * 0.95 + depth;
+    camera.userData.dist = Math.max(h / Math.tan(vfov), w / Math.tan(hfov)) * pad + depth;
     camera.userData.cy = cy;
     camera.updateProjectionMatrix();
   };
 }
 
 // Place la caméra selon l'azimut/élévation, la distance et le survol.
-function orbit(camera, az, el, dist, hover, pointer) {
+function orbit(camera, az, el, dist, hover, pointer, zoom = 0.1) {
   const a = THREE.MathUtils.degToRad(az + pointer.x * 16 * hover);
   const e = THREE.MathUtils.degToRad(el - pointer.y * 7 * hover);
-  const d = dist * (1 - 0.1 * hover);
+  const d = dist * (1 - zoom * hover);
   const cy = camera.userData.cy || 0;
   camera.position.set(d * Math.cos(e) * Math.sin(a), cy + d * Math.sin(e), d * Math.cos(e) * Math.cos(a));
   camera.lookAt(0, cy, 0);
@@ -594,10 +594,10 @@ function buildPlan(scene) {
   }
 
   return {
-    frameCamera: framer(0.85, 0.66, 0.62, 0.15),
+    frameCamera: framer(0.85, 0.66, 0.62, 0.15, 1.22),
     update(t, dt, hover, pointer, camera) {
       paint(t, hover);
-      orbit(camera, 8 + Math.sin(t * 0.4) * 14, 9, camera.userData.dist, hover, pointer);
+      orbit(camera, 8 + Math.sin(t * 0.4) * 14, 9, camera.userData.dist, hover, pointer, 0);
     },
   };
 }
@@ -652,9 +652,9 @@ async function buildConsole(scene, kit, data) {
   scene.add(glow);
 
   return {
-    frameCamera: framer(0.72, 0.42, 0.2, 0.2),
+    frameCamera: framer(0.72, 0.42, 0.2, 0.2, 1.2),
     update(t, dt, hover, pointer, camera) {
-      orbit(camera, -26 + Math.sin(t * 0.32) * 7, 31, camera.userData.dist, hover, pointer);
+      orbit(camera, -26 + Math.sin(t * 0.32) * 7, 31, camera.userData.dist, hover, pointer, 0);
     },
   };
 }
