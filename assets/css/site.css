@@ -204,8 +204,9 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 .setting-icon svg{width:44px;height:44px;}
 @media (hover:hover){.setting:hover .setting-icon{border-color:var(--accent);color:var(--text);box-shadow:0 0 28px -6px color-mix(in srgb,var(--accent) 70%,transparent);}}
 
-.audience-art{margin:0 0 22px;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,rgba(123,145,196,.14),transparent 70%),#0b0c11;border:1px solid var(--line);}
-.audience-art svg{display:block;width:100%;height:auto;}
+.audience-art{position:relative;aspect-ratio:16/9;margin:0 0 22px;border-radius:14px;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,rgba(123,145,196,.16),transparent 72%),#0a0b10;border:1px solid var(--line);}
+.audience-art canvas{position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .9s var(--ease);}
+.audience-art.is-ready canvas{opacity:1;}
 
 /* Timeline du process : une ligne de lumière suit le défilement et allume chaque étape */
 .process{position:relative;}
@@ -259,3 +260,13 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
 }
 .scene3d,.step-3d{-webkit-tap-highlight-color:transparent;}
 
+/* Moment signature : sur grand écran, l'accroche reste collée pendant que la caméra plonge dans l'écran de la console */
+.hero-track.is-dive{position:relative;height:calc((100svh - 72px) * 2.4);}
+.hero-track.is-dive .hero{position:sticky;top:72px;height:calc(100svh - 72px);min-height:0;}
+.hero-track.is-dive .scene3d{left:0;width:100%;}
+.hero-track.is-dive .scene3d picture{left:40%;width:60%;}
+.hero-track.is-dive .hero-inner,.hero-track.is-dive .hero-meta{filter:opacity(calc(1 - var(--dive,0) * 1.7));}
+.hero-track.is-dive .hero-inner{translate:calc(var(--dive,0) * -70px) 0;}
+.hero-track.is-dive .hero.is-diving .hero-inner{pointer-events:none;}
+.hero-track.is-dive .hero.is-diving .hero-inner > *{pointer-events:none;}
+.hero-track.is-dive .stage{opacity:calc(1 - var(--dive,0) * 0.6);}

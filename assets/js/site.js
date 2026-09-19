@@ -120,16 +120,18 @@ if (scene) {
   if (document.readyState === 'complete') whenIdle(); else window.addEventListener('load', whenIdle, { once: true });
 }
 
-// Process : les objets 3D des quatre étapes se chargent quand la section approche de l'écran.
+// Process et cibles : les scènes 3D (étapes, festivals, clubs) se chargent quand leur section approche de l'écran.
 const process = document.querySelector('.process[data-module]');
 if (process && 'IntersectionObserver' in window) {
   const moduleUrl = new URL(process.dataset.module, document.baseURI).href;
-  const near = new IntersectionObserver(([entry]) => {
-    if (!entry.isIntersecting) return;
+  const near = new IntersectionObserver(entries => {
+    if (!entries.some(entry => entry.isIntersecting)) return;
     near.disconnect();
     import(moduleUrl).catch(() => {});
   }, { rootMargin: '600px 0px' });
   near.observe(process);
+  const audiences = document.querySelector('.audiences');
+  if (audiences) near.observe(audiences);
 }
 
 // Illustrations animées (SMIL) : figées pour ceux qui ont réduit les animations.
