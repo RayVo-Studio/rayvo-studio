@@ -715,6 +715,12 @@ function makeCrowd({ count, x0, x1, z0, z1, seed, phones = 0, color = 0x0d0e13 }
   };
 }
 
+// Mouvements symétriques : d = écart au centre de la rangée, k = distance au centre, sgn = côté (les deux moitiés se répondent en miroir).
+function mirror(i, n) {
+  const d = i - (n - 1) / 2;
+  return { d, k: Math.abs(d), sgn: Math.sign(d) };
+}
+
 // Couleurs du show : bleu de marque, crème, ambre, magenta ; chaque projecteur décale sa teinte.
 const SHOW_COLORS = [ACCENT, CREAM, 0xe9a56b, 0xc45a9c].map(c => new THREE.Color(c));
 function showColor(u, out) {
@@ -833,21 +839,22 @@ function buildFestival(scene, kit) {
       const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
       beams.forEach(b => {
-        const spread = (b.i - 2.5) * (0.16 + 0.1 * Math.sin(s * 0.5));
-        b.tilt.rotation.z = spread + Math.sin(s * 0.9 + b.i * 0.8) * (0.25 + hover * 0.25);
-        b.tilt.rotation.x = 0.42 + Math.sin(s * 0.75 + b.i * 1.3) * (0.4 + hover * 0.25);
-        b.root.rotation.y = Math.sin(s * 0.4 + b.i) * 0.25;
+        const m = mirror(b.i, beams.length);
+        b.tilt.rotation.z = m.d * (0.16 + 0.1 * Math.sin(s * 0.5)) + m.sgn * Math.sin(s * 0.9 + m.k * 0.8) * (0.25 + hover * 0.25);
+        b.tilt.rotation.x = 0.42 + Math.sin(s * 0.75 + m.k * 1.3) * (0.4 + hover * 0.25);
+        b.root.rotation.y = m.sgn * Math.sin(s * 0.4 + m.k) * 0.25;
       });
       pars.forEach(p => {
-        showColor(s * 0.45 + p.i * 0.7, tmp);
+        const m = mirror(p.i, pars.length);
+        showColor(s * 0.45 + m.k * 0.7, tmp);
         p.mat.color.copy(tmp);
         tintBeam(p.wash, tmp);
         p.glare.material.color.copy(tmp);
-        p.holder.rotation.x = 0.3 + Math.sin(s * 0.6 + p.i) * 0.22;
-        p.holder.rotation.z = Math.cos(s * 0.5 + p.i * 1.4) * 0.25;
+        p.holder.rotation.x = 0.3 + Math.sin(s * 0.6 + m.k) * 0.22;
+        p.holder.rotation.z = m.sgn * Math.cos(s * 0.5 + m.k * 1.4) * 0.25;
       });
       floorPars.forEach(p => {
-        showColor(s * 0.45 + p.i * 0.7 + 2, tmp);
+        showColor(s * 0.45 + mirror(p.i, floorPars.length).k * 0.7 + 2, tmp);
         p.mat.color.copy(tmp);
         tintBeam(p.wash, tmp);
         p.glare.material.color.copy(tmp);
@@ -1012,22 +1019,24 @@ function buildFestivalNight(scene, kit) {
       const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
       beams.forEach(b => {
-        b.tilt.rotation.z = (b.i - 3.5) * (0.1 + 0.07 * Math.sin(s * 0.5)) + Math.sin(s * 0.9 + b.i * 0.8) * (0.2 + hover * 0.15);
-        b.tilt.rotation.x = -1.34 + Math.sin(s * 0.75 + b.i * 1.3) * (0.16 + hover * 0.08);
-        b.root.rotation.y = Math.sin(s * 0.4 + b.i) * 0.3;
-        showColor(s * 0.35 + b.i * 0.5, tmp);
+        const m = mirror(b.i, beams.length);
+        b.tilt.rotation.z = m.d * (0.1 + 0.07 * Math.sin(s * 0.5)) + m.sgn * Math.sin(s * 0.9 + m.k * 0.8) * (0.2 + hover * 0.15);
+        b.tilt.rotation.x = -1.34 + Math.sin(s * 0.75 + m.k * 1.3) * (0.16 + hover * 0.08);
+        b.root.rotation.y = m.sgn * Math.sin(s * 0.4 + m.k) * 0.3;
+        showColor(s * 0.35 + m.k * 0.5, tmp);
         tintBeam(b.halo, tmp);
       });
       pars.forEach(p => {
-        showColor(s * 0.45 + p.i * 0.7, tmp);
+        const m = mirror(p.i, pars.length);
+        showColor(s * 0.45 + m.k * 0.7, tmp);
         p.mat.color.copy(tmp);
         tintBeam(p.wash, tmp);
         p.glare.material.color.copy(tmp);
-        p.holder.rotation.x = 0.35 + Math.sin(s * 0.6 + p.i) * 0.22;
-        p.holder.rotation.z = Math.cos(s * 0.5 + p.i * 1.4) * 0.25;
+        p.holder.rotation.x = 0.35 + Math.sin(s * 0.6 + m.k) * 0.22;
+        p.holder.rotation.z = m.sgn * Math.cos(s * 0.5 + m.k * 1.4) * 0.25;
       });
       floorPars.forEach(p => {
-        showColor(s * 0.45 + p.i * 0.7 + 2, tmp);
+        showColor(s * 0.45 + mirror(p.i, floorPars.length).k * 0.7 + 2, tmp);
         p.mat.color.copy(tmp);
         tintBeam(p.wash, tmp);
         p.glare.material.color.copy(tmp);
@@ -1203,14 +1212,16 @@ function buildClub(scene, kit) {
       });
       strips.forEach((st, i) => { showColor(s * 0.3 + i * 0.25, tmp); st.material.color.copy(tmp).multiplyScalar(0.6 + beat * 0.5); });
       heads.forEach(h => {
-        h.tilt.rotation.z = (h.i - 2.5) * 0.18 + Math.sin(s * 0.85 + h.i) * (0.28 + hover * 0.2);
-        h.tilt.rotation.x = -1.34 + Math.sin(s * 0.7 + h.i * 1.6) * (0.16 + hover * 0.08);
-        h.root.rotation.y = Math.sin(s * 0.5 + h.i) * 0.3;
-        showColor(s * 0.4 + h.i * 0.8, tmp);
+        const m = mirror(h.i, heads.length);
+        h.tilt.rotation.z = m.d * 0.18 + m.sgn * Math.sin(s * 0.85 + m.k) * (0.28 + hover * 0.2);
+        h.tilt.rotation.x = -1.34 + Math.sin(s * 0.7 + m.k * 1.6) * (0.16 + hover * 0.08);
+        h.root.rotation.y = m.sgn * Math.sin(s * 0.5 + m.k) * 0.3;
+        showColor(s * 0.4 + m.k * 0.8, tmp);
         tintBeam(h.halo, tmp);
       });
       side.forEach(h => {
-        h.tilt.rotation.z = (h.x < 0 ? 0.55 : -0.55) + Math.sin(s * 0.8 + h.k * 2) * 0.25;
+        const sgn = h.x < 0 ? -1 : 1;
+        h.tilt.rotation.z = -sgn * 0.55 + sgn * Math.sin(s * 0.8 + h.k * 2) * 0.25;
         h.tilt.rotation.x = -1.3 + Math.sin(s * 0.65 + h.k) * 0.18;
         showColor(s * 0.5 + h.k, tmp);
         tintBeam(h.halo, tmp);
