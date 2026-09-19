@@ -138,7 +138,18 @@ function makeKit() {
   const matte = new THREE.MeshStandardMaterial({ color: 0x121318, roughness: 0.9, metalness: 0.05 });
   const accent = new THREE.MeshBasicMaterial({ color: ACCENT, toneMapped: false });
   const lens = new THREE.MeshBasicMaterial({ color: CREAM, toneMapped: false });
-  return { dark, steel, matte, accent, lens, floor: floorTexture() };
+  return { dark, steel, matte, accent, lens, floor: floorTexture(), glow: glowTexture() };
+}
+
+function glowTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 128;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.25, 'rgba(255,255,255,0.45)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+  x.fillStyle = g;
+  x.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c);
 }
 
 // Sol : disque plan de feu (quadrillage) ou bureau sombre, qui s'efface sur les bords.
@@ -253,20 +264,100 @@ function beam(length, dir, color, opacity = 0.5, spread = 0.13) {
   return mesh;
 }
 
-// Lyre / projecteur asservi : cylindre de tête + lentille, orienté selon -Y en repos.
-function head(kit, scale = 1) {
-  const g = new THREE.Group();
-  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.05, 0.2, 24), kit.dark);
-  g.add(body);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.05, 24), kit.steel);
-  cap.position.y = 0.12;
-  g.add(cap);
-  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.06, 24), kit.lens);
+// Halo de lentille : petit éclat additif posé sur chaque projecteur allumé.
+function glowSprite(kit, color, size) {
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: kit.glow, color, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  sprite.scale.setScalar(size);
+  return sprite;
+}
+
+// Couleur d'un faisceau (uniform du shader) : on convertit en sRGB comme à la création.
+function tintBeam(mesh, color) {
+  const c = color.clone().convertLinearToSRGB();
+  mesh.material.uniforms.uColor.value.set(c.r, c.g, c.b);
+}
+
+// Lyre BEAM : lyre en U, tête étroite, faisceau fin très long. Suspendue sous une poutre.
+function beamFixture(kit) {
+  const root = new THREE.Group();
+  const clamp = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.05), kit.steel);
+  root.add(clamp);
+  const yoke = new THREE.Group();
+  root.add(yoke);
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(0.115, 0.014, 0.03), kit.dark);
+  bar.position.y = -0.02;
+  yoke.add(bar);
+  [-0.056, 0.056].forEach(x => {
+    const arm = new THREE.Mesh(new THREE.BoxGeometry(0.014, 0.115, 0.03), kit.dark);
+    arm.position.set(x, -0.075, 0);
+    yoke.add(arm);
+  });
+  const tilt = new THREE.Group();
+  tilt.position.y = -0.1;
+  root.add(tilt);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.045, 0.13, 20), kit.dark);
+  tilt.add(body);
+  const ring = new THREE.Mesh(new THREE.CylinderGeometry(0.047, 0.047, 0.012, 20), kit.steel);
+  ring.position.y = -0.066;
+  tilt.add(ring);
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.03, 20), kit.lens);
   lens.rotation.x = Math.PI / 2;
-  lens.position.y = -0.102;
-  g.add(lens);
-  g.scale.setScalar(scale);
-  return g;
+  lens.position.y = -0.073;
+  tilt.add(lens);
+  const core = beam(1.1, -1, CREAM, 1, 0.02);
+  core.position.y = -0.075;
+  const halo = beam(1.1, -1, ACCENT, 0.3, 0.06);
+  halo.position.y = -0.075;
+  const glare = glowSprite(kit, CREAM, 0.16);
+  glare.position.y = -0.08;
+  tilt.add(core, halo, glare);
+  return { root, tilt, core, halo, glare };
+}
+
+// Par LED : boîtier cylindrique court, lentille colorée, large faisceau de lavage.
+function ledPar(kit, up = false) {
+  const root = new THREE.Group();
+  const holder = new THREE.Group();
+  root.add(holder);
+  const body = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.056, 0.09, 24), kit.dark);
+  holder.add(body);
+  const fins = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.02, 24), kit.steel);
+  fins.position.y = 0.05;
+  holder.add(fins);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(0.048, 0.006, 8, 24), kit.steel);
+  rim.rotation.x = Math.PI / 2;
+  rim.position.y = -0.046;
+  holder.add(rim);
+  const mat = new THREE.MeshBasicMaterial({ color: ACCENT, toneMapped: false });
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.043, 24), mat);
+  lens.rotation.x = Math.PI / 2;
+  lens.position.y = -0.047;
+  holder.add(lens);
+  const wash = beam(up ? 0.6 : 0.75, -1, ACCENT, 0.7, 0.2);
+  wash.position.y = -0.05;
+  const glare = glowSprite(kit, ACCENT, 0.2);
+  glare.position.y = -0.06;
+  holder.add(wash, glare);
+  if (up) holder.rotation.x = Math.PI; // posé au sol, la lentille regarde vers le haut
+  return { root, holder, mat, wash, glare };
+}
+
+// Blinder / barre LED : boîtier plat avec quatre cellules qui claquent sur le rythme.
+function blinder(kit) {
+  const root = new THREE.Group();
+  root.add(new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.05, 0.05), kit.dark));
+  const cells = [];
+  for (let i = 0; i < 4; i += 1) {
+    const cell = new THREE.Mesh(new THREE.PlaneGeometry(0.038, 0.034), new THREE.MeshBasicMaterial({ color: CREAM, toneMapped: false }));
+    cell.rotation.x = Math.PI / 2;
+    cell.position.set(-0.075 + i * 0.05, -0.0255, 0);
+    root.add(cell);
+    cells.push(cell);
+  }
+  const glare = glowSprite(kit, CREAM, 0.3);
+  glare.position.y = -0.06;
+  root.add(glare);
+  return { root, cells, glare };
 }
 
 // Cadre la caméra sur un objet de demi-largeur w et demi-hauteur h, centré à la hauteur cy.
@@ -567,7 +658,7 @@ async function buildConsole(scene, kit, data) {
   };
 }
 
-// 04 Exploitation : une scène de festival, structure de toit, mur LED, enceintes, projecteurs qui balaient et public.
+// 04 Exploitation : une scène de festival, structure de toit, mur LED, enceintes, lyres BEAM, par LED, blinders et public.
 function buildFestival(scene, kit) {
   const world = new THREE.Group();
   scene.add(world);
@@ -590,7 +681,7 @@ function buildFestival(scene, kit) {
   frame.position.set(0, 0.42, -0.385);
   world.add(frame);
 
-  // Structure de toit : quatre poteaux, deux poutres avant/arrière et deux latérales.
+  // Structure de toit : poteaux, trois poutres et deux latérales.
   const roofY = 0.98;
   [[-0.66, -0.4], [0.66, -0.4], [-0.66, 0.16], [0.66, 0.16]].forEach(([x, z]) => {
     const post = truss(kit, roofY, 0.035);
@@ -598,7 +689,7 @@ function buildFestival(scene, kit) {
     post.position.set(x, roofY / 2, z);
     world.add(post);
   });
-  [-0.4, 0.16].forEach(z => { const b = truss(kit, 1.36, 0.035); b.position.set(0, roofY, z); world.add(b); });
+  [-0.4, -0.12, 0.16].forEach(z => { const b = truss(kit, 1.36, 0.035); b.position.set(0, roofY, z); world.add(b); });
   [-0.66, 0.66].forEach(x => { const b = truss(kit, 0.56, 0.035); b.rotation.y = Math.PI / 2; b.position.set(x, roofY, -0.12); world.add(b); });
 
   // Piles d'enceintes de chaque côté.
@@ -611,19 +702,34 @@ function buildFestival(scene, kit) {
     }
   });
 
-  // Projecteurs suspendus à la poutre avant et arrière, faisceaux croisés.
-  const heads = [];
-  [[-0.5, 0.16], [-0.17, 0.16], [0.17, 0.16], [0.5, 0.16], [-0.34, -0.4], [0, -0.4], [0.34, -0.4]].forEach(([x, z], i) => {
-    const pivot = new THREE.Group();
-    pivot.position.set(x, roofY - 0.05, z);
-    const h = head(kit, 0.75);
-    h.position.y = -0.1;
-    pivot.add(h);
-    const b = beam(0.95, -1, i % 2 ? ACCENT : CREAM, 0.6, 0.085);
-    b.position.y = -0.18;
-    pivot.add(b);
-    world.add(pivot);
-    heads.push({ pivot, phase: i * 1.1, front: z > 0 });
+  // Poutre avant : six lyres BEAM qui balaient en éventail.
+  const beams = [-0.6, -0.36, -0.12, 0.12, 0.36, 0.6].map((x, i) => {
+    const f = beamFixture(kit);
+    f.root.position.set(x, roofY - 0.035, 0.16);
+    world.add(f.root);
+    return { ...f, i };
+  });
+  // Poutre du milieu : quatre par LED en lavage.
+  const pars = [-0.5, -0.17, 0.17, 0.5].map((x, i) => {
+    const f = ledPar(kit);
+    f.root.position.set(x, roofY - 0.06, -0.12);
+    f.holder.rotation.x = 0.3;
+    world.add(f.root);
+    return { ...f, i };
+  });
+  // Poutre arrière : quatre blinders.
+  const blinders = [-0.45, -0.15, 0.15, 0.45].map(x => {
+    const b = blinder(kit);
+    b.root.position.set(x, roofY - 0.035, -0.4);
+    world.add(b.root);
+    return b;
+  });
+  // Au sol : cinq par LED en contre-jour, faisceaux vers le ciel.
+  const floorPars = [-0.56, -0.28, 0, 0.28, 0.56].map((x, i) => {
+    const f = ledPar(kit, true);
+    f.root.position.set(x, 0.14, -0.3);
+    world.add(f.root);
+    return { ...f, i };
   });
 
   // Public : silhouettes devant la scène.
@@ -635,34 +741,62 @@ function buildFestival(scene, kit) {
   world.add(crowd);
   const m4 = new THREE.Matrix4();
 
+  // Couleurs du show : bleu de marque, crème, ambre, magenta ; chaque projecteur décale sa teinte.
+  const palette = [ACCENT, CREAM, 0xe9a56b, 0xc45a9c].map(c => new THREE.Color(c));
+  const tmp = new THREE.Color();
+  const cycle = (u, out) => {
+    const k = ((u % palette.length) + palette.length) % palette.length;
+    const a = Math.floor(k);
+    return out.copy(palette[a]).lerp(palette[(a + 1) % palette.length], k - a);
+  };
+
   return {
-    frameCamera: framer(0.98, 0.6, 0.5, 0.3),
+    frameCamera: framer(0.98, 0.62, 0.5, 0.3),
     update(t, dt, hover, pointer, camera) {
       const s = t * (1 + hover * 1.8);
-      heads.forEach(hd => {
-        const amp = 0.28 + hover * 0.3;
-        hd.pivot.rotation.x = (hd.front ? -0.35 : 0.3) + Math.sin(s * 0.9 + hd.phase) * amp;
-        hd.pivot.rotation.z = Math.cos(s * 0.7 + hd.phase) * amp * 1.2;
+      const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
+      beams.forEach(b => {
+        const spread = (b.i - 2.5) * (0.16 + 0.1 * Math.sin(s * 0.5));
+        b.tilt.rotation.z = spread + Math.sin(s * 0.9 + b.i * 0.8) * (0.25 + hover * 0.25);
+        b.tilt.rotation.x = 0.42 + Math.sin(s * 0.75 + b.i * 1.3) * (0.4 + hover * 0.25);
+        b.root.rotation.y = Math.sin(s * 0.4 + b.i) * 0.25;
       });
-      const px = ((t * 40) % 256);
-      const gr = lx.createLinearGradient(0, 0, 256, 0);
-      gr.addColorStop(0, '#0a0d18'); gr.addColorStop(((px / 256) + 0.0) % 1, '#7b91c4'); gr.addColorStop(1, '#fcf2e7');
+      pars.forEach(p => {
+        cycle(s * 0.45 + p.i * 0.7, tmp);
+        p.mat.color.copy(tmp);
+        tintBeam(p.wash, tmp);
+        p.glare.material.color.copy(tmp);
+        p.holder.rotation.x = 0.3 + Math.sin(s * 0.6 + p.i) * 0.22;
+        p.holder.rotation.z = Math.cos(s * 0.5 + p.i * 1.4) * 0.25;
+      });
+      floorPars.forEach(p => {
+        cycle(s * 0.45 + p.i * 0.7 + 2, tmp);
+        p.mat.color.copy(tmp);
+        tintBeam(p.wash, tmp);
+        p.glare.material.color.copy(tmp);
+      });
+      blinders.forEach(b => {
+        const c = 0.25 + beat * 0.75;
+        b.cells.forEach(cell => cell.material.color.setScalar(c));
+        b.glare.material.opacity = 0.2 + beat * 0.8;
+      });
+      // mur LED : pistes qui défilent, qui claquent sur le rythme
       lx.fillStyle = '#080a12';
       lx.fillRect(0, 0, 256, 112);
       for (let i = 0; i < 9; i += 1) {
-        const y = 12 + i * 11;
         const wv = 0.5 + 0.5 * Math.sin(s * 1.5 + i * 0.7);
-        lx.fillStyle = i % 3 ? `rgba(123,145,196,${0.4 + wv * 0.5})` : `rgba(252,242,231,${0.3 + wv * 0.6})`;
-        lx.fillRect(0, y, 256 * (0.25 + wv * 0.75), 7);
+        cycle(s * 0.3 + i * 0.35, tmp);
+        lx.fillStyle = `rgba(${tmp.r * 255 | 0},${tmp.g * 255 | 0},${tmp.b * 255 | 0},${0.45 + wv * 0.5})`;
+        lx.fillRect(0, 12 + i * 11, 256 * (0.2 + wv * 0.8), 7);
       }
       ledTex.needsUpdate = true;
-      people.forEach((p, i) => {
-        const bob = Math.max(0, Math.sin(s * 3 + p.ph)) * (0.012 + hover * 0.03);
-        m4.makeTranslation(p.x, 0.06 + bob, p.z);
+      people.forEach((pp, i) => {
+        const bob = Math.max(0, Math.sin(s * 3 + pp.ph)) * (0.012 + hover * 0.03);
+        m4.makeTranslation(pp.x, 0.06 + bob, pp.z);
         crowd.setMatrixAt(i, m4);
       });
       crowd.instanceMatrix.needsUpdate = true;
-      orbit(camera, Math.sin(t * 0.3) * 20, 13, camera.userData.dist, hover, pointer);
+      orbit(camera, Math.sin(t * 0.3) * 20, 12, camera.userData.dist, hover, pointer);
     },
   };
 }
