@@ -153,34 +153,6 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
 .js .plate[data-reveal] .plate-body{opacity:0;transition:opacity .8s ease calc(var(--dl,0ms) + .3s);}
 .js .plate[data-reveal].is-in .plate-body{opacity:1;}
 
-/* Responsive */
-@media (max-width: 900px){
-  .setting{grid-template-columns:1fr;gap:10px;}
-  .setting .tag{justify-self:start;text-align:left;margin-top:6px;}
-  .process{grid-template-columns:1fr 1fr;row-gap:40px;}
-  .about,.contact-inner,.faq,.audiences{grid-template-columns:1fr;}
-  .faq h2{position:static;}
-  .plate,.plate:nth-child(n){grid-column:1 / -1;}
-  .frame{height:auto;aspect-ratio:4 / 3;}
-}
-@media (max-width: 560px){
-  .site-nav .wrap{padding-block:10px;}
-  .logo img{height:30px;}
-  .navlinks{font-size:13px;gap:0;}
-  .navlinks a{padding-inline:8px;}
-  .hero h1{font-size:clamp(32px,10.2vw,44px);}
-  .navlinks .nav-cta{margin-left:4px;}
-  .process{grid-template-columns:1fr;}
-  .step-3d{aspect-ratio:16/10;}
-  .contact-list dd{font-size:15px;}
-}
-
-@media (prefers-reduced-motion: reduce){
-  .hero .line,.hero .lede,.hero .cta-row,.hero-meta{animation:none;}
-  html{scroll-behavior:auto;}
-  .frame-media,.plate-cta .ico,.contact-mail .ico,.btn{transition:none;}
-}
-
 /* Matière commune : mêmes gris que la console, sections alternées, filet de lumière entre les sections */
 @property --ambient{syntax:'<color>';inherits:true;initial-value:transparent;}
 section{position:relative;}
@@ -219,3 +191,35 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 .faq-item h3{font-family:var(--font);font-weight:600;font-size:clamp(20px,2vw,25px);line-height:1.25;}
 .faq-item p{margin:12px 0 0;max-width:62ch;color:var(--muted);font-size:17px;}
 .faq-item a{display:inline-block;padding-block:12px;margin-block:-12px;color:var(--text);text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:1.5px;text-underline-offset:4px;}
+
+/* Responsive : en fin de fichier pour l'emporter sur les règles de base ci-dessus */
+@media (max-width: 900px){
+  .setting{grid-template-columns:1fr;gap:10px;}
+  .setting .tag{justify-self:start;text-align:left;margin-top:6px;}
+  .process{grid-template-columns:1fr 1fr;row-gap:40px;}
+  .about,.contact-inner,.faq,.audiences{grid-template-columns:1fr;}
+  .faq h2{position:static;}
+  .plate,.plate:nth-child(n){grid-column:1 / -1;}
+  .frame{height:auto;aspect-ratio:4 / 3;}
+}
+@media (max-width: 560px){
+  .site-nav .wrap{padding-block:10px;}
+  .logo img{height:30px;}
+  .navlinks{font-size:13px;gap:0;}
+  .navlinks a{padding-inline:8px;}
+  .hero h1{font-size:clamp(32px,10.2vw,44px);}
+  .navlinks .nav-cta{margin-left:4px;}
+  .process{grid-template-columns:1fr;}
+  .step-3d{aspect-ratio:16/10;}
+  .contact-list dd{font-size:15px;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hero .line,.hero .lede,.hero .cta-row,.hero-meta{animation:none;}
+  html{scroll-behavior:auto;}
+  .frame-media,.plate-cta .ico,.contact-mail .ico,.btn{transition:none;}
+}
+@media (max-width: 400px){
+  .navlinks a[href="#reglages"]{display:none;}
+}
+.scene3d,.step-3d{-webkit-tap-highlight-color:transparent;}

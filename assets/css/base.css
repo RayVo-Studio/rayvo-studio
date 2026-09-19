@@ -25,6 +25,7 @@
 }
 *{box-sizing:border-box;}
 html,body{background:var(--bg);}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
 body{color:var(--text);font-family:var(--font);line-height:1.5;padding-inline:0;margin:0;}
 a{color:inherit;}
 ::selection{background:var(--accent);color:var(--accent-ink);}
