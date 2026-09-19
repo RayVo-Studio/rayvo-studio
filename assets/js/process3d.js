@@ -98,12 +98,15 @@ async function init() {
     }
     if (items.some(item => item.visible) && !document.hidden) raf = requestAnimationFrame(frame);
   }
-  // Chaque objet se construit sans attendre les autres : la console (modèle de 2 Mo) arrive quand elle est prête.
-  items.forEach(async item => {
-    try { item.api = await item.build(item.scene, kit, root.dataset); } catch (error) { console.warn('process3d', error); return; }
+  // Chaque scène ne se construit qu'au moment où elle approche de l'écran (la console charge son modèle de 2 Mo à ce moment-là).
+  async function ensure(item) {
+    if (item.api || item.building) return;
+    item.building = true;
+    try { item.api = await item.build(item.scene, kit, root.dataset); } catch (error) { console.warn('process3d', error); item.building = false; return; }
+    item.building = false;
     item.api.frameCamera(item.camera);
     if (item.visible) { draw(item, calm ? CALM_TIME : undefined); start(); }
-  });
+  }
 
   function start() { if (!raf && !calm && !document.hidden) { items.forEach(item => { item.stamp = performance.now(); }); raf = requestAnimationFrame(frame); } }
 
@@ -112,10 +115,10 @@ async function init() {
       const item = items.find(it => it.el === entry.target);
       if (!item) return;
       item.visible = entry.isIntersecting;
-      if (item.visible) { item.stamp = performance.now(); if (calm) draw(item, CALM_TIME); }
+      if (item.visible) { item.stamp = performance.now(); ensure(item); if (calm) draw(item, CALM_TIME); }
     });
     start();
-  }, { rootMargin: '80px' });
+  }, { rootMargin: '200px' });
   items.forEach(item => watcher.observe(item.el));
   document.addEventListener('visibilitychange', start);
   const resizer = new ResizeObserver(() => items.forEach(item => { if (item.visible) draw(item, calm ? CALM_TIME : undefined); }));
