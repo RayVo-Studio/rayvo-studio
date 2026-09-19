@@ -187,8 +187,7 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 #realisations.has-ambient::before{opacity:1;}
 
 /* Console grandMA3 en 3D : image d'attente, puis scène 3D qui la remplace en fondu */
-.scene3d{position:absolute;top:0;right:0;bottom:56px;width:60%;z-index:1;cursor:zoom-in;}
-.scene3d.is-zoomed{cursor:zoom-out;}
+.scene3d{position:absolute;top:0;right:0;bottom:56px;width:60%;z-index:1;cursor:default;}
 .scene3d picture,.scene3d canvas,.scene-poster{position:absolute;inset:0;width:100%;height:100%;}
 .scene-poster{object-fit:contain;transition:opacity .8s ease;}
 .scene3d canvas{display:block;opacity:0;transition:opacity .8s ease;}
