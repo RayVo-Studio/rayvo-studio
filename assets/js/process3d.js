@@ -291,7 +291,7 @@ function tintBeam(mesh, color) {
 }
 
 // Lyre BEAM : lyre en U, tête étroite, faisceau fin très long. Suspendue sous une poutre.
-function beamFixture(kit) {
+function beamFixture(kit, length = 1.1) {
   const root = new THREE.Group();
   const clamp = new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.02, 0.05), kit.steel);
   root.add(clamp);
@@ -317,9 +317,9 @@ function beamFixture(kit) {
   lens.rotation.x = Math.PI / 2;
   lens.position.y = -0.073;
   tilt.add(lens);
-  const core = beam(1.1, -1, CREAM, 1, 0.02);
+  const core = beam(length, -1, CREAM, 1, 0.02);
   core.position.y = -0.075;
-  const halo = beam(1.1, -1, ACCENT, 0.3, 0.06);
+  const halo = beam(length, -1, ACCENT, 0.3, 0.06);
   halo.position.y = -0.075;
   const glare = glowSprite(kit, CREAM, 0.16);
   glare.position.y = -0.08;
@@ -948,7 +948,7 @@ function buildFestivalNight(scene, kit) {
 
   // Poutre avant : huit lyres BEAM en éventail ; milieu : six par LED ; arrière : cinq blinders ; sol : sept par LED en contre-jour.
   const beams = Array.from({ length: 8 }, (_, i) => {
-    const f = beamFixture(kit);
+    const f = beamFixture(kit, 2.8);
     f.root.position.set(-1.1 + i * 0.314, roofY - 0.035, -0.56);
     world.add(f.root);
     return { ...f, i };
@@ -1012,8 +1012,8 @@ function buildFestivalNight(scene, kit) {
       const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
       beams.forEach(b => {
-        b.tilt.rotation.z = (b.i - 3.5) * (0.13 + 0.09 * Math.sin(s * 0.5)) + Math.sin(s * 0.9 + b.i * 0.8) * (0.22 + hover * 0.2);
-        b.tilt.rotation.x = 0.3 + Math.sin(s * 0.75 + b.i * 1.3) * (0.4 + hover * 0.2);
+        b.tilt.rotation.z = (b.i - 3.5) * (0.1 + 0.07 * Math.sin(s * 0.5)) + Math.sin(s * 0.9 + b.i * 0.8) * (0.2 + hover * 0.15);
+        b.tilt.rotation.x = -1.34 + Math.sin(s * 0.75 + b.i * 1.3) * (0.16 + hover * 0.08);
         b.root.rotation.y = Math.sin(s * 0.4 + b.i) * 0.3;
         showColor(s * 0.35 + b.i * 0.5, tmp);
         tintBeam(b.halo, tmp);
@@ -1061,7 +1061,7 @@ function buildFestivalNight(scene, kit) {
   };
 }
 
-// Club vu depuis la piste : salle noire, murs de LED, cabine DJ sous un grand écran, lyres et lasers, boule à facettes, stroboscope, foule.
+// Club vu depuis la piste : salle noire, murs de LED, cabine DJ sous un grand écran, lyres, boule à facettes, stroboscope, foule.
 function buildClub(scene, kit) {
   scene.background = backdrop(['#040407', '#0a0714', '#150c22']);
   scene.fog = new THREE.FogExp2(0x0c0818, 0.3);
@@ -1135,13 +1135,13 @@ function buildClub(scene, kit) {
   bar.position.set(0, 1.08, -0.5);
   world.add(bar);
   const heads = Array.from({ length: 6 }, (_, i) => {
-    const f = beamFixture(kit);
+    const f = beamFixture(kit, 2.8);
     f.root.position.set(-1.0 + i * 0.4, 1.045, -0.5);
     world.add(f.root);
     return { ...f, i };
   });
   const side = [-1.5, 1.5].flatMap(x => [0.2, 0.9].map((z, k) => {
-    const f = beamFixture(kit);
+    const f = beamFixture(kit, 2.4);
     f.root.position.set(x, 1.1, z);
     f.root.rotation.z = x < 0 ? -0.1 : 0.1;
     world.add(f.root);
@@ -1165,16 +1165,6 @@ function buildClub(scene, kit) {
     world.add(m);
     return { m, wall, a: (i / 34) * Math.PI * 2, r: 0.4 + (i % 5) * 0.22, speed: 0.35 + (i % 4) * 0.08 };
   });
-
-  // Lasers depuis la cabine vers la salle.
-  const lasers = new THREE.Group();
-  lasers.position.set(0, 0.85, -1.45);
-  const rays = Array.from({ length: 14 }, (_, i) => {
-    const l = beam(3.4, 1, i % 3 ? 0x74ffc6 : 0x8fd3ff, 0.95, 0.005);
-    lasers.add(l);
-    return l;
-  });
-  world.add(lasers);
 
   // Stroboscope : un éclair blanc très bref sur certains temps.
   const strobe = glowSprite(kit, 0xffffff, 3.6);
@@ -1214,20 +1204,17 @@ function buildClub(scene, kit) {
       strips.forEach((st, i) => { showColor(s * 0.3 + i * 0.25, tmp); st.material.color.copy(tmp).multiplyScalar(0.6 + beat * 0.5); });
       heads.forEach(h => {
         h.tilt.rotation.z = (h.i - 2.5) * 0.18 + Math.sin(s * 0.85 + h.i) * (0.28 + hover * 0.2);
-        h.tilt.rotation.x = 0.5 + Math.sin(s * 0.7 + h.i * 1.6) * (0.4 + hover * 0.2);
+        h.tilt.rotation.x = -1.34 + Math.sin(s * 0.7 + h.i * 1.6) * (0.16 + hover * 0.08);
         h.root.rotation.y = Math.sin(s * 0.5 + h.i) * 0.3;
         showColor(s * 0.4 + h.i * 0.8, tmp);
         tintBeam(h.halo, tmp);
       });
       side.forEach(h => {
         h.tilt.rotation.z = (h.x < 0 ? 0.55 : -0.55) + Math.sin(s * 0.8 + h.k * 2) * 0.25;
-        h.tilt.rotation.x = 0.35 + Math.sin(s * 0.65 + h.k) * 0.35;
+        h.tilt.rotation.x = -1.3 + Math.sin(s * 0.65 + h.k) * 0.18;
         showColor(s * 0.5 + h.k, tmp);
         tintBeam(h.halo, tmp);
       });
-      lasers.rotation.x = Math.PI / 2 + 0.08 + Math.sin(s * 0.9) * 0.1;
-      lasers.rotation.y = Math.sin(s * 0.5) * 0.35;
-      rays.forEach((r, i) => { r.rotation.z = (i - 6.5) * (0.13 + 0.05 * Math.sin(s * 1.2)); });
       decks.forEach((d, i) => { d.rotation.y = s * (i ? 1.6 : -1.3); });
       showColor(s * 0.5, tmp);
       facade.material.color.copy(tmp).multiplyScalar(0.35 + beat * 0.55);
