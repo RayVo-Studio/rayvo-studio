@@ -617,7 +617,7 @@ function buildPlan(scene) {
 // 03 Programmation : la vraie console grandMA3, écrans éteints comme dans l'accroche.
 // La vraie console grandMA3 (modèle fourni) : téléchargée une seule fois, écrans éteints, teintée comme dans l'accroche.
 let consoleModel;
-async function makeConsole(url, width) {
+async function makeConsole(url, width, brand) {
   consoleModel ||= new GLTFLoader().loadAsync(url);
   const model = (await consoleModel).scene.clone(true);
   const box = new THREE.Box3().setFromObject(model);
@@ -627,21 +627,57 @@ async function makeConsole(url, width) {
   pad.add(model);
   pad.scale.setScalar(width / (box.max.x - box.min.x));
 
-  const dark = document.createElement('canvas');
-  dark.width = 256; dark.height = 176;
-  const dx = dark.getContext('2d');
-  const g = dx.createRadialGradient(128, 88, 8, 128, 88, 150);
-  g.addColorStop(0, '#151a2b'); g.addColorStop(1, '#05060a');
-  dx.fillStyle = g;
-  dx.fillRect(0, 0, 256, 176);
-  const screenTex = new THREE.CanvasTexture(dark);
-  screenTex.colorSpace = THREE.SRGBColorSpace;
-  screenTex.flipY = false;
+  // Écrans : deux écrans latéraux éteints, l'écran du centre affiche le logo RayVo et le slogan, comme sur la console de l'accroche.
+  const makeScreen = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 768; canvas.height = 530;
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.colorSpace = THREE.SRGBColorSpace;
+    texture.flipY = false;
+    texture.anisotropy = 4;
+    return { canvas, ctx: canvas.getContext('2d'), texture };
+  };
+  const side = makeScreen();
+  const centre = makeScreen();
+  const backdropScreen = ({ ctx, canvas, texture }) => {
+    const W = canvas.width, H = canvas.height;
+    const bg = ctx.createRadialGradient(W / 2, H * 0.4, 20, W / 2, H * 0.4, W * 0.7);
+    bg.addColorStop(0, '#151a2b');
+    bg.addColorStop(1, '#05060a');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    texture.needsUpdate = true;
+  };
+  backdropScreen(side);
+  const logo = new Image();
+  const paintCentre = () => {
+    backdropScreen(centre);
+    const { ctx, canvas, texture } = centre;
+    const W = canvas.width, H = canvas.height;
+    if (logo.complete && logo.naturalWidth) {
+      const lw = W * 0.5, lh = lw * logo.naturalHeight / logo.naturalWidth;
+      ctx.drawImage(logo, (W - lw) / 2, H * 0.14, lw, lh);
+    }
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '700 58px Montserrat, system-ui, sans-serif';
+    [brand?.line1, brand?.line2].filter(Boolean).forEach((line, i) => {
+      ctx.shadowColor = 'rgba(252,242,231,0.5)';
+      ctx.shadowBlur = 8;
+      ctx.fillStyle = '#a79c91'; // taupe du logo
+      ctx.fillText(line.toUpperCase(), W / 2, H * 0.6 + i * 70);
+    });
+    ctx.shadowBlur = 0;
+    texture.needsUpdate = true;
+  };
+  paintCentre();
+  if (brand?.logo) { logo.onload = paintCentre; logo.src = brand.logo; }
+  document.fonts?.ready.then(paintCentre);
 
   model.traverse(node => {
     if (!node.isMesh) return;
     if (['Screen_L', 'Screen_C', 'Screen_R'].includes(node.name)) {
-      node.material = new THREE.MeshBasicMaterial({ map: screenTex, toneMapped: false });
+      node.material = new THREE.MeshBasicMaterial({ map: (node.name === 'Screen_C' ? centre : side).texture, toneMapped: false });
       return;
     }
     (Array.isArray(node.material) ? node.material : [node.material]).forEach(m => {
@@ -663,7 +699,7 @@ async function buildConsole(scene, kit, data) {
   const world = new THREE.Group();
   scene.add(world);
   world.add(floor(kit, 'desk', 1.0));
-  world.add(await makeConsole(data.model, 1.3));
+  world.add(await makeConsole(data.model, 1.3, data));
   const glow = new THREE.PointLight(ACCENT, 0.6, 2.2, 1.8);
   glow.position.set(0, 0.5, -0.1);
   scene.add(glow);
@@ -1085,15 +1121,15 @@ async function buildClub(scene, kit, data, opts = {}) {
   // Vue de l'exploitant : on est derrière la console grandMA3 au fond de la salle, les écrans face à nous.
   let pult = null;
   if (op) {
-    pult = await makeConsole(data.model, 0.5);
-    pult.position.set(0, 0, 1.36);
+    pult = await makeConsole(data.model, 0.26, data);
+    pult.position.set(0, 0, 1.72);
     world.add(pult);
     const lamp = new THREE.PointLight(0xa9bcff, 1.1, 1.6, 1.5);
-    lamp.position.set(0, 0.45, 1.55);
+    lamp.position.set(0, 0.2, 1.85);
     scene.add(lamp);
   }
-  const base = op ? new THREE.Vector3(0, 0.5, 2.0) : new THREE.Vector3(0, 0.2, 1.85);
-  const look = op ? new THREE.Vector3(0, -0.1, -0.8) : new THREE.Vector3(0, 0.48, -1.0);
+  const base = op ? new THREE.Vector3(0, 0.21, 2.0) : new THREE.Vector3(0, 0.2, 1.85);
+  const look = op ? new THREE.Vector3(0, 0.14, -0.8) : new THREE.Vector3(0, 0.48, -1.0);
 
   return {
     frameCamera(camera) { camera.fov = 52; camera.updateProjectionMatrix(); },
