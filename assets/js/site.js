@@ -25,7 +25,7 @@ if (nav) {
 // Apparitions au scroll : l'état caché n'existe que si le script tourne.
 if (!calm && 'IntersectionObserver' in window) {
   document.documentElement.classList.add('js');
-  const targets = document.querySelectorAll('.sec-head, .setting, .audience, .step, .plate, .about > *, .faq > *, .contact-inner > *');
+  const targets = document.querySelectorAll('.sec-head, .setting, .audience, .plate, .about > *, .faq > *, .contact-inner > *');
   const observer = new IntersectionObserver(entries => {
     entries.filter(entry => entry.isIntersecting).forEach((entry, i) => {
       entry.target.style.setProperty('--dl', Math.min(i, 4) * 90 + 'ms');
@@ -130,4 +130,45 @@ if (process && 'IntersectionObserver' in window) {
     import(moduleUrl).catch(() => {});
   }, { rootMargin: '600px 0px' });
   near.observe(process);
+}
+
+// Illustrations animées (SMIL) : figées pour ceux qui ont réduit les animations.
+if (calm) document.querySelectorAll('svg.fx').forEach(svg => svg.pauseAnimations?.());
+
+// Timeline du process : une ligne de lumière suit le défilement et allume chaque étape.
+const timeline = document.querySelector('.process');
+if (timeline && !calm && 'IntersectionObserver' in window) {
+  const steps = [...timeline.querySelectorAll('.step')];
+  const head = document.createElement('span');
+  head.className = 'playhead';
+  head.setAttribute('aria-hidden', 'true');
+  timeline.prepend(head);
+  timeline.classList.add('has-timeline');
+  const wide = window.matchMedia('(min-width:901px)');
+
+  // Petits écrans : chaque étape s'allume en arrivant.
+  const lighter = new IntersectionObserver(entries => entries.forEach(entry => {
+    if (entry.isIntersecting && !wide.matches) { entry.target.classList.add('is-lit'); lighter.unobserve(entry.target); }
+  }), { rootMargin: '0px 0px -22% 0px' });
+  steps.forEach(step => lighter.observe(step));
+
+  // Grands écrans : la position dans la fenêtre pilote la ligne (avec un peu d'inertie).
+  let target = 0, shown = 0, raf = 0;
+  const measure = () => {
+    if (!wide.matches) return;
+    const box = timeline.getBoundingClientRect();
+    target = Math.min(1, Math.max(0, (window.innerHeight * 0.82 - box.top) / (window.innerHeight * 0.5)));
+    if (!raf) raf = requestAnimationFrame(step);
+  };
+  const step = () => {
+    raf = 0;
+    shown += (target - shown) * 0.14;
+    if (Math.abs(target - shown) < 0.002) shown = target;
+    timeline.style.setProperty('--p', shown.toFixed(4));
+    steps.forEach((el, i) => el.classList.toggle('is-lit', shown >= i / steps.length + 0.02));
+    if (shown !== target) raf = requestAnimationFrame(step);
+  };
+  window.addEventListener('scroll', measure, { passive: true });
+  window.addEventListener('resize', measure);
+  measure();
 }
