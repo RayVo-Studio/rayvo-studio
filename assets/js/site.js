@@ -119,3 +119,15 @@ if (scene) {
   const whenIdle = () => ('requestIdleCallback' in window ? requestIdleCallback(loadScene, { timeout: 2500 }) : setTimeout(loadScene, 300));
   if (document.readyState === 'complete') whenIdle(); else window.addEventListener('load', whenIdle, { once: true });
 }
+
+// Process : les objets 3D des quatre étapes se chargent quand la section approche de l'écran.
+const process = document.querySelector('.process[data-module]');
+if (process && 'IntersectionObserver' in window) {
+  const moduleUrl = new URL(process.dataset.module, document.baseURI).href;
+  const near = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    near.disconnect();
+    import(moduleUrl).catch(() => {});
+  }, { rootMargin: '600px 0px' });
+  near.observe(process);
+}
