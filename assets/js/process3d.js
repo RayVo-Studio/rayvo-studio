@@ -34,7 +34,7 @@ async function init() {
     plan: buildPlan,
     console: buildConsole,
     stage: buildFestival,
-    festival: (scene, kitPack) => buildFestival(scene, kitPack, { wide: true }),
+    festival: buildFestivalNight,
     club: buildClub,
   };
   const order = ['park', 'plan', 'console', 'stage'];
@@ -279,7 +279,7 @@ function beam(length, dir, color, opacity = 0.5, spread = 0.13) {
 
 // Halo de lentille : petit éclat additif posé sur chaque projecteur allumé.
 function glowSprite(kit, color, size) {
-  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: kit.glow, color, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: kit.glow, color, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, fog: false }));
   sprite.scale.setScalar(size);
   return sprite;
 }
@@ -671,31 +671,46 @@ async function buildConsole(scene, kit, data) {
   };
 }
 
-// Public : silhouettes sur les épaules desquelles se lèvent des bras, au rythme du show.
-function makeCrowd({ count, x0, x1, z0, z1, seed }) {
+// Public : silhouettes (corps, tête), bras levés au rythme du show, et des téléphones allumés dans les mains.
+function makeCrowd({ count, x0, x1, z0, z1, seed, phones = 0, color = 0x0d0e13 }) {
   const rand = seeded(seed);
-  const mat = new THREE.MeshStandardMaterial({ color: 0x0d0e13, roughness: 0.9 });
-  const bodies = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.028, 0.05, 3, 8), mat, count);
+  const mat = new THREE.MeshStandardMaterial({ color, roughness: 0.95 });
+  const bodies = new THREE.InstancedMesh(new THREE.SphereGeometry(0.036, 14, 10).scale(1.0, 1.7, 0.75), mat, count);
+  const heads = new THREE.InstancedMesh(new THREE.SphereGeometry(0.024, 12, 8), mat, count);
   const arms = new THREE.InstancedMesh(new THREE.CapsuleGeometry(0.008, 0.055, 2, 6), mat, count);
-  const people = Array.from({ length: count }, () => ({ x: x0 + rand() * (x1 - x0), z: z0 + rand() * (z1 - z0), ph: rand() * 6, side: rand() < 0.5 ? -1 : 1 }));
+  const lit = new THREE.MeshBasicMaterial({ color: 0xfff1d8, toneMapped: false, side: THREE.DoubleSide, fog: false });
+  const screens = phones ? new THREE.InstancedMesh(new THREE.PlaneGeometry(0.014, 0.024), lit, phones) : null;
+  const people = Array.from({ length: count }, () => ({ x: x0 + rand() * (x1 - x0), z: z0 + rand() * (z1 - z0), ph: rand() * 6, side: rand() < 0.5 ? -1 : 1, k: 0.86 + rand() * 0.3 }));
   const group = new THREE.Group();
-  group.add(bodies, arms);
-  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), pos = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1), none = new THREE.Vector3(0.0001, 0.0001, 0.0001);
+  group.add(bodies, heads, arms);
+  if (screens) group.add(screens);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), e = new THREE.Euler(), pos = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1), none = new THREE.Vector3(0.0001, 0.0001, 0.0001), size = new THREE.Vector3();
   return {
     group,
     update(s, hover) {
       people.forEach((p, i) => {
         const bob = Math.max(0, Math.sin(s * 3 + p.ph)) * (0.012 + hover * 0.03);
-        m.makeTranslation(p.x, 0.06 + bob, p.z);
+        pos.set(p.x, 0.058 * p.k + bob, p.z);
+        m.compose(pos, q.identity(), size.setScalar(p.k));
         bodies.setMatrixAt(i, m);
+        pos.set(p.x, 0.142 * p.k + bob, p.z);
+        m.compose(pos, q.identity(), size.setScalar(p.k));
+        heads.setMatrixAt(i, m);
         const up = Math.sin(s * 1.1 + p.ph * 2) > 0.55 - hover * 0.9;
-        pos.set(p.x + p.side * 0.03, 0.15 + bob, p.z);
+        pos.set(p.x + p.side * 0.04 * p.k, 0.15 * p.k + bob, p.z);
         q.setFromEuler(e.set(0, 0, -p.side * (0.3 + Math.sin(s * 5 + p.ph) * 0.18)));
         m.compose(pos, q, up ? one : none);
         arms.setMatrixAt(i, m);
+        if (screens && i < phones) {
+          pos.set(p.x + p.side * 0.06 * p.k, 0.22 * p.k + bob, p.z + 0.012);
+          m.compose(pos, q.identity(), up ? one : none);
+          screens.setMatrixAt(i, m);
+        }
       });
       bodies.instanceMatrix.needsUpdate = true;
+      heads.instanceMatrix.needsUpdate = true;
       arms.instanceMatrix.needsUpdate = true;
+      if (screens) screens.instanceMatrix.needsUpdate = true;
     },
   };
 }
@@ -736,12 +751,10 @@ function ledWall(w, h) {
 }
 
 // 04 Exploitation : une scène de festival, structure de toit, mur LED, enceintes, lyres BEAM, par LED, blinders et public.
-// Avec { wide: true } : le site du festival en grand, écrans latéraux, foule dense, faisceaux jusqu'au ciel.
-function buildFestival(scene, kit, opts = {}) {
-  const wide = Boolean(opts.wide);
+function buildFestival(scene, kit) {
   const world = new THREE.Group();
   scene.add(world);
-  world.add(floor(kit, 'desk', wide ? 2.3 : 1.2));
+  world.add(floor(kit, 'desk', 1.2));
 
   const deck = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.1, 0.62), kit.dark);
   deck.position.set(0, 0.05, -0.12);
@@ -775,22 +788,6 @@ function buildFestival(scene, kit, opts = {}) {
     }
   });
 
-  // Grand format : deux écrans latéraux (IMAG) sur pied, comme sur un vrai festival.
-  const sides = wide ? [-1.32, 1.32].map(x => {
-    const wall = ledWall(0.34, 0.5);
-    wall.mesh.position.set(x, 0.55, -0.05);
-    wall.mesh.rotation.y = x < 0 ? 0.35 : -0.35;
-    world.add(wall.mesh);
-    const back = new THREE.Mesh(new THREE.BoxGeometry(0.37, 0.53, 0.02), kit.dark);
-    back.position.set(x, 0.55, -0.062);
-    back.rotation.y = wall.mesh.rotation.y;
-    world.add(back);
-    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.012, 0.3, 8), kit.steel);
-    leg.position.set(x, 0.15, -0.06);
-    world.add(leg);
-    return wall;
-  }) : [];
-
   // Poutre avant : six lyres BEAM qui balaient en éventail.
   const beams = [-0.6, -0.36, -0.12, 0.12, 0.36, 0.6].map((x, i) => {
     const f = beamFixture(kit);
@@ -821,19 +818,17 @@ function buildFestival(scene, kit, opts = {}) {
     return { ...f, i };
   });
 
-  const crowd = makeCrowd(wide
-    ? { count: 190, x0: -1.55, x1: 1.55, z0: 0.42, z1: 1.3, seed: 11 }
-    : { count: 46, x0: -0.75, x1: 0.75, z0: 0.42, z1: 0.97, seed: 11 });
+  const crowd = makeCrowd({ count: 46, x0: -0.75, x1: 0.75, z0: 0.42, z1: 0.97, seed: 11 });
   world.add(crowd.group);
   const tmp = new THREE.Color();
   // Brume lumineuse au-dessus du public : la lumière des projecteurs s'y diffuse.
-  const haze = glowSprite(kit, ACCENT, wide ? 2.6 : 1.7);
+  const haze = glowSprite(kit, ACCENT, 1.7);
   haze.position.set(0, 0.5, 0.35);
   haze.material.opacity = 0.32;
   world.add(haze);
 
   return {
-    frameCamera: wide ? framer(1.18, 0.62, 0.52, 0.4) : framer(0.98, 0.62, 0.5, 0.3),
+    frameCamera: framer(0.98, 0.62, 0.5, 0.3),
     update(t, dt, hover, pointer, camera) {
       const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
@@ -866,127 +861,387 @@ function buildFestival(scene, kit, opts = {}) {
       showColor(s * 0.3, tmp);
       haze.material.color.copy(tmp);
       haze.material.opacity = 0.2 + beat * 0.16;
-      sides.forEach(w => w.paint(s + 1.3));
       crowd.update(s, hover);
-      orbit(camera, Math.sin(t * 0.3) * (wide ? 14 : 20), wide ? 11 : 12, camera.userData.dist, hover, pointer);
+      orbit(camera, Math.sin(t * 0.3) * 20, 12, camera.userData.dist, hover, pointer);
     },
   };
 }
 
-// Club : un dancefloor sous une boule à facettes, cabine DJ, mur LED, lyres et lasers au plafond, foule les bras en l'air.
-function buildClub(scene, kit) {
+// Ciel / fond de salle : dégradé vertical peint en 2D, posé en arrière-plan de la scène.
+function backdrop(stops) {
+  const c = document.createElement('canvas');
+  c.width = 4; c.height = 256;
+  const x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, 256);
+  stops.forEach((color, i) => g.addColorStop(i / (stops.length - 1), color));
+  x.fillStyle = g;
+  x.fillRect(0, 0, 4, 256);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.SRGBColorSpace;
+  return tex;
+}
+
+// Vue depuis le public : la caméra est à hauteur de tête, elle dérive doucement et avance au survol.
+function insideView(camera, base, look, t, hover, pointer) {
+  camera.position.set(
+    base.x + Math.sin(t * 0.21) * 0.1 + pointer.x * 0.07,
+    base.y + Math.sin(t * 0.9) * 0.004 + hover * 0.018,
+    base.z - hover * 0.16,
+  );
+  camera.lookAt(look.x + pointer.x * 0.14 + Math.sin(t * 0.17) * 0.05, look.y - pointer.y * 0.06, look.z);
+}
+
+// Barre de LED lumineuse (mur, plafond, contour d'estrade) : couleur changée à chaque image.
+function ledStrip(len, thick, axis) {
+  const dims = axis === 'x' ? [len, thick, thick] : axis === 'y' ? [thick, len, thick] : [thick, thick, len];
+  const mesh = new THREE.Mesh(new THREE.BoxGeometry(...dims), new THREE.MeshBasicMaterial({ color: ACCENT, toneMapped: false }));
+  return mesh;
+}
+
+// Festival vu du public, de nuit : brume, contre-jour, lyres BEAM, par LED, lasers, jets de CO2, foule et téléphones allumés.
+function buildFestivalNight(scene, kit) {
+  scene.background = backdrop(['#02030a', '#080d24', '#1a2148']);
+  scene.fog = new THREE.FogExp2(0x0d1330, 0.24);
   const world = new THREE.Group();
   scene.add(world);
-  world.add(floor(kit, 'desk', 1.7));
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(8, 48).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x06070b, roughness: 1 }));
+  world.add(ground);
 
-  // Fond de salle : mur LED derrière la cabine.
-  const led = ledWall(1.5, 0.5);
-  led.mesh.position.set(0, 0.6, -0.78);
+  const deck = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.16, 0.9), kit.dark);
+  deck.position.set(0, 0.08, -0.95);
+  world.add(deck);
+  const led = ledWall(2.1, 0.74);
+  led.mesh.position.set(0, 0.6, -1.38);
   world.add(led.mesh);
-  const frame = new THREE.Mesh(new THREE.BoxGeometry(1.54, 0.54, 0.02), kit.dark);
-  frame.position.set(0, 0.6, -0.795);
+  const frame = new THREE.Mesh(new THREE.BoxGeometry(2.16, 0.8, 0.03), kit.dark);
+  frame.position.set(0, 0.6, -1.4);
   world.add(frame);
 
-  // Cabine DJ : estrade, table, deux platines, façade lumineuse, silhouette.
-  const riser = new THREE.Mesh(new THREE.BoxGeometry(0.95, 0.08, 0.36), kit.dark);
-  riser.position.set(0, 0.04, -0.6);
+  // Structure de toit : quatre poteaux, trois poutres, deux latérales.
+  const roofY = 1.12;
+  [[-1.32, -1.36], [1.32, -1.36], [-1.32, -0.56], [1.32, -0.56]].forEach(([x, z]) => {
+    const post = truss(kit, roofY, 0.04);
+    post.rotation.z = Math.PI / 2;
+    post.position.set(x, roofY / 2, z);
+    world.add(post);
+  });
+  [-1.36, -0.96, -0.56].forEach(z => { const b = truss(kit, 2.7, 0.04); b.position.set(0, roofY, z); world.add(b); });
+  [-1.32, 1.32].forEach(x => { const b = truss(kit, 0.84, 0.04); b.rotation.y = Math.PI / 2; b.position.set(x, roofY, -0.96); world.add(b); });
+
+  // Sonorisation : lignes d'enceintes suspendues de chaque côté, caissons de grave au sol.
+  [-1.62, 1.62].forEach(x => {
+    for (let k = 0; k < 8; k += 1) {
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(0.17, 0.1, 0.15), kit.matte);
+      cab.position.set(x, 1.0 - k * 0.108, -0.55);
+      cab.rotation.x = 0.035 * k;
+      world.add(cab);
+    }
+    const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.16, 6), kit.steel);
+    chain.position.set(x, 1.09, -0.55);
+    world.add(chain);
+    [-0.1, 0.1].forEach(dx => {
+      const sub = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.2, 0.22), kit.matte);
+      sub.position.set(x + dx * 2.2, 0.1, -0.5);
+      world.add(sub);
+    });
+  });
+
+  // Poutre avant : huit lyres BEAM en éventail ; milieu : six par LED ; arrière : cinq blinders ; sol : sept par LED en contre-jour.
+  const beams = Array.from({ length: 8 }, (_, i) => {
+    const f = beamFixture(kit);
+    f.root.position.set(-1.1 + i * 0.314, roofY - 0.035, -0.56);
+    world.add(f.root);
+    return { ...f, i };
+  });
+  const pars = Array.from({ length: 6 }, (_, i) => {
+    const f = ledPar(kit);
+    f.root.position.set(-1.0 + i * 0.4, roofY - 0.06, -0.96);
+    f.holder.rotation.x = 0.35;
+    world.add(f.root);
+    return { ...f, i };
+  });
+  const blinders = Array.from({ length: 5 }, (_, i) => {
+    const b = blinder(kit);
+    b.root.position.set(-1.0 + i * 0.5, roofY - 0.035, -1.36);
+    world.add(b.root);
+    return b;
+  });
+  const floorPars = Array.from({ length: 7 }, (_, i) => {
+    const f = ledPar(kit, true);
+    f.root.position.set(-1.05 + i * 0.35, 0.21, -0.6);
+    world.add(f.root);
+    return { ...f, i };
+  });
+
+  // Lasers vers le ciel, jets de CO2 sur le devant de la scène.
+  const lasers = new THREE.Group();
+  lasers.position.set(0, roofY + 0.02, -0.96);
+  const rays = Array.from({ length: 9 }, (_, i) => {
+    const l = beam(3.2, 1, i % 2 ? 0x74ffc6 : CREAM, 0.9, 0.005);
+    lasers.add(l);
+    return l;
+  });
+  world.add(lasers);
+  const jets = [-1.0, -0.5, 0, 0.5, 1.0].map(x => {
+    const j = glowSprite(kit, 0xdfe8ff, 0.4);
+    j.position.set(x, 0.3, -0.53);
+    j.material.opacity = 0;
+    world.add(j);
+    return j;
+  });
+
+  // Public : dense, en contre-jour, avec des téléphones allumés.
+  const crowd = makeCrowd({ count: 300, x0: -1.7, x1: 1.7, z0: -0.2, z1: 1.05, seed: 11, phones: 34, color: 0x05060a });
+  world.add(crowd.group);
+
+  // Brume : nappes lumineuses à plusieurs profondeurs.
+  const hazes = [[0, 0.5, -0.8, 3.2], [0, 0.45, -0.1, 3.0], [0, 0.4, 0.6, 2.6]].map(([x, y, z, size]) => {
+    const h = glowSprite(kit, ACCENT, size);
+    h.position.set(x, y, z);
+    world.add(h);
+    return h;
+  });
+  scene.add(new THREE.AmbientLight(0x1b2340, 0.9));
+  const tmp = new THREE.Color();
+  const base = new THREE.Vector3(0, 0.21, 1.62);
+  const look = new THREE.Vector3(0, 0.56, -0.9);
+
+  return {
+    frameCamera(camera) { camera.fov = 50; camera.updateProjectionMatrix(); },
+    update(t, dt, hover, pointer, camera) {
+      const s = t;
+      const beat = Math.pow(Math.max(0, Math.sin(s * 2.4)), 6);
+      beams.forEach(b => {
+        b.tilt.rotation.z = (b.i - 3.5) * (0.13 + 0.09 * Math.sin(s * 0.5)) + Math.sin(s * 0.9 + b.i * 0.8) * (0.22 + hover * 0.2);
+        b.tilt.rotation.x = 0.3 + Math.sin(s * 0.75 + b.i * 1.3) * (0.4 + hover * 0.2);
+        b.root.rotation.y = Math.sin(s * 0.4 + b.i) * 0.3;
+        showColor(s * 0.35 + b.i * 0.5, tmp);
+        tintBeam(b.halo, tmp);
+      });
+      pars.forEach(p => {
+        showColor(s * 0.45 + p.i * 0.7, tmp);
+        p.mat.color.copy(tmp);
+        tintBeam(p.wash, tmp);
+        p.glare.material.color.copy(tmp);
+        p.holder.rotation.x = 0.35 + Math.sin(s * 0.6 + p.i) * 0.22;
+        p.holder.rotation.z = Math.cos(s * 0.5 + p.i * 1.4) * 0.25;
+      });
+      floorPars.forEach(p => {
+        showColor(s * 0.45 + p.i * 0.7 + 2, tmp);
+        p.mat.color.copy(tmp);
+        tintBeam(p.wash, tmp);
+        p.glare.material.color.copy(tmp);
+      });
+      blinders.forEach(b => {
+        const c = 0.2 + beat * 0.8;
+        b.cells.forEach(cell => cell.material.color.setScalar(c));
+        b.glare.material.opacity = 0.2 + beat * 0.8;
+      });
+      rays.forEach((r, i) => {
+        r.rotation.z = (i - 4) * (0.2 + 0.06 * Math.sin(s * 0.8));
+        r.rotation.x = -0.25 + Math.sin(s * 0.6 + i * 0.5) * 0.3;
+      });
+      lasers.rotation.y = Math.sin(s * 0.35) * 0.5;
+      jets.forEach((j, i) => {
+        const k = ((s * 0.42 + i * 0.09) % 1);
+        const on = Math.max(0, 1 - k * 3.2);
+        j.material.opacity = on * 0.9;
+        j.scale.set(0.3 + (1 - on) * 0.5, 0.35 + (1 - on) * 0.9, 1);
+        j.position.y = 0.3 + (1 - on) * 0.35;
+      });
+      hazes.forEach((h, i) => {
+        showColor(s * 0.3 + i, tmp);
+        h.material.color.copy(tmp);
+        h.material.opacity = 0.17 + beat * 0.1;
+      });
+      led.paint(s);
+      crowd.update(s, hover);
+      insideView(camera, base, look, t, hover, pointer);
+    },
+  };
+}
+
+// Club vu depuis la piste : salle noire, murs de LED, cabine DJ sous un grand écran, lyres et lasers, boule à facettes, stroboscope, foule.
+function buildClub(scene, kit) {
+  scene.background = backdrop(['#040407', '#0a0714', '#150c22']);
+  scene.fog = new THREE.FogExp2(0x0c0818, 0.3);
+  const world = new THREE.Group();
+  scene.add(world);
+  const dark = new THREE.MeshStandardMaterial({ color: 0x0a0b10, roughness: 0.6, metalness: 0.3 });
+  const floorMesh = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 4.2).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: 0x0c0d13, roughness: 0.35, metalness: 0.5 }));
+  floorMesh.position.set(0, 0, 0.2);
+  world.add(floorMesh);
+  const backWall = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.2, 0.05), dark);
+  backWall.position.set(0, 0.6, -1.7);
+  world.add(backWall);
+  [-1.8, 1.8].forEach(x => {
+    const wall = new THREE.Mesh(new THREE.BoxGeometry(0.05, 1.2, 4.2), dark);
+    wall.position.set(x, 0.6, 0.2);
+    world.add(wall);
+  });
+  const ceiling = new THREE.Mesh(new THREE.BoxGeometry(3.6, 0.05, 4.2), dark);
+  ceiling.position.set(0, 1.2, 0.2);
+  world.add(ceiling);
+
+  // Bandeaux de LED : deux lignes par mur latéral, une grille au plafond, un cadre autour de l'estrade.
+  const strips = [];
+  [-1.77, 1.77].forEach(x => [0.28, 0.7, 1.1].forEach(y => {
+    const st = ledStrip(4.0, 0.018, 'z');
+    st.position.set(x, y, 0.2);
+    world.add(st);
+    strips.push(st);
+  }));
+  [-1.2, -0.5, 0.2, 0.9, 1.6].forEach(z => {
+    const st = ledStrip(3.5, 0.016, 'x');
+    st.position.set(0, 1.17, z);
+    world.add(st);
+    strips.push(st);
+  });
+
+  // Cabine DJ sur estrade, devant un grand écran LED.
+  const led = ledWall(2.0, 0.78);
+  led.mesh.position.set(0, 0.68, -1.66);
+  world.add(led.mesh);
+  const riser = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.18, 0.6), kit.dark);
+  riser.position.set(0, 0.09, -1.32);
   world.add(riser);
-  const desk = new THREE.Mesh(new THREE.BoxGeometry(0.72, 0.15, 0.2), kit.steel);
-  desk.position.set(0, 0.155, -0.52);
-  world.add(desk);
-  const facade = new THREE.Mesh(new THREE.PlaneGeometry(0.7, 0.11), new THREE.MeshBasicMaterial({ color: ACCENT, toneMapped: false }));
-  facade.position.set(0, 0.155, -0.419);
+  const riserGlow = ledStrip(1.7, 0.02, 'x');
+  riserGlow.position.set(0, 0.19, -1.02);
+  world.add(riserGlow);
+  strips.push(riserGlow);
+  const table = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.18, 0.26), kit.steel);
+  table.position.set(0, 0.27, -1.2);
+  world.add(table);
+  const facade = new THREE.Mesh(new THREE.PlaneGeometry(0.98, 0.13), new THREE.MeshBasicMaterial({ color: ACCENT, toneMapped: false }));
+  facade.position.set(0, 0.27, -1.069);
   world.add(facade);
-  const decks = [-0.2, 0.2].map(x => {
-    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 0.012, 32), kit.steel);
-    plate.position.set(x, 0.236, -0.52);
+  const decks = [-0.24, 0.24].map(x => {
+    const plate = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.012, 32), kit.matte);
+    plate.position.set(x, 0.366, -1.2);
     world.add(plate);
     return plate;
   });
   const dj = new THREE.Group();
-  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.045, 0.1, 4, 10), kit.matte);
-  torso.position.y = 0.16;
-  const head = new THREE.Mesh(new THREE.SphereGeometry(0.036, 14, 10), kit.matte);
-  head.position.y = 0.27;
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.05, 0.12, 4, 10), kit.matte);
+  torso.position.y = 0.2;
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.04, 14, 10), kit.matte);
+  head.position.y = 0.34;
   dj.add(torso, head);
-  dj.position.set(0, 0.08, -0.66);
+  dj.position.set(0, 0.34, -1.36);
   world.add(dj);
 
-  // Boule à facettes suspendue, avec des taches de lumière qui courent sur la salle.
-  const ballRoot = new THREE.Group();
-  ballRoot.position.set(0, 1.0, 0.05);
-  const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.5, 6), kit.steel);
-  wire.position.y = 0.3;
-  const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.1, 2), new THREE.MeshStandardMaterial({ color: 0xdfe4f5, metalness: 1, roughness: 0.18, flatShading: true, emissive: 0x28304a }));
-  ballRoot.add(wire, ball);
-  const spotLight = new THREE.PointLight(0xdfe6ff, 0.9, 2.4, 1.6);
-  ballRoot.add(spotLight);
-  world.add(ballRoot);
-  const spots = Array.from({ length: 22 }, (_, i) => {
-    const m = new THREE.Mesh(new THREE.CircleGeometry(0.03 + (i % 3) * 0.012, 16), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xdfe6ff : ACCENT, transparent: true, opacity: 0.85, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
-    m.rotation.x = -Math.PI / 2;
-    world.add(m);
-    return { m, a: (i / 22) * Math.PI * 2, r: 0.35 + (i % 5) * 0.2, speed: 0.4 + (i % 4) * 0.07 };
-  });
-
-  // Plafond : une poutre avec des lyres BEAM, plus des lasers depuis la cabine.
-  const bar = truss(kit, 1.5, 0.035);
-  bar.position.set(0, 1.0, -0.42);
+  // Plafond : une poutre de lyres BEAM au-dessus de la piste, deux rangées de par LED sur les côtés.
+  const bar = truss(kit, 2.4, 0.04);
+  bar.position.set(0, 1.08, -0.5);
   world.add(bar);
-  const heads = [-0.62, -0.31, 0, 0.31, 0.62].map((x, i) => {
+  const heads = Array.from({ length: 6 }, (_, i) => {
     const f = beamFixture(kit);
-    f.root.position.set(x, 0.965, -0.42);
+    f.root.position.set(-1.0 + i * 0.4, 1.045, -0.5);
     world.add(f.root);
     return { ...f, i };
   });
+  const side = [-1.5, 1.5].flatMap(x => [0.2, 0.9].map((z, k) => {
+    const f = beamFixture(kit);
+    f.root.position.set(x, 1.1, z);
+    f.root.rotation.z = x < 0 ? -0.1 : 0.1;
+    world.add(f.root);
+    return { ...f, x, k };
+  }));
+
+  // Boule à facettes, avec des taches de lumière sur le sol et les murs.
+  const ballRoot = new THREE.Group();
+  ballRoot.position.set(0, 0.95, 0.35);
+  const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.004, 0.004, 0.4, 6), kit.steel);
+  wire.position.y = 0.25;
+  const ball = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 2), new THREE.MeshStandardMaterial({ color: 0xdfe4f5, metalness: 1, roughness: 0.15, flatShading: true, emissive: 0x2c3556 }));
+  ballRoot.add(wire, ball);
+  const ballGlow = glowSprite(kit, 0xdfe6ff, 0.6);
+  ballRoot.add(ballGlow);
+  world.add(ballRoot);
+  const spots = Array.from({ length: 34 }, (_, i) => {
+    const wall = i % 3;
+    const m = new THREE.Mesh(new THREE.CircleGeometry(0.03 + (i % 3) * 0.012, 14), new THREE.MeshBasicMaterial({ color: i % 2 ? 0xdfe6ff : ACCENT, transparent: true, opacity: 0.8, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
+    if (wall === 0) m.rotation.x = -Math.PI / 2; else m.rotation.y = wall === 1 ? Math.PI / 2 : -Math.PI / 2;
+    world.add(m);
+    return { m, wall, a: (i / 34) * Math.PI * 2, r: 0.4 + (i % 5) * 0.22, speed: 0.35 + (i % 4) * 0.08 };
+  });
+
+  // Lasers depuis la cabine vers la salle.
   const lasers = new THREE.Group();
-  lasers.position.set(0, 0.36, -0.55);
-  const rays = Array.from({ length: 11 }, (_, i) => {
-    const l = beam(2.0, 1, i % 2 ? ACCENT : CREAM, 0.95, 0.006);
-    l.rotation.z = (i - 5) * 0.16;
+  lasers.position.set(0, 0.85, -1.45);
+  const rays = Array.from({ length: 14 }, (_, i) => {
+    const l = beam(3.4, 1, i % 3 ? 0x74ffc6 : 0x8fd3ff, 0.95, 0.005);
     lasers.add(l);
     return l;
   });
   world.add(lasers);
 
-  const crowd = makeCrowd({ count: 120, x0: -1.05, x1: 1.05, z0: -0.15, z1: 0.95, seed: 23 });
+  // Stroboscope : un éclair blanc très bref sur certains temps.
+  const strobe = glowSprite(kit, 0xffffff, 3.6);
+  strobe.position.set(0, 0.85, 0.2);
+  strobe.material.opacity = 0;
+  world.add(strobe);
+
+  const crowd = makeCrowd({ count: 260, x0: -1.5, x1: 1.5, z0: -0.7, z1: 1.05, seed: 23, phones: 18, color: 0x05050a });
   world.add(crowd.group);
+  const hazes = [[0, 0.45, -0.9, 3.2], [0, 0.4, -0.1, 3.0], [0, 0.35, 0.7, 2.6]].map(([x, y, z, size]) => {
+    const h = glowSprite(kit, ACCENT, size);
+    h.position.set(x, y, z);
+    world.add(h);
+    return h;
+  });
+  scene.add(new THREE.AmbientLight(0x1a1530, 0.9));
+  const floorLight = new THREE.PointLight(0x7b91c4, 1.0, 3.5, 1.6);
+  floorLight.position.set(0, 0.7, 0.3);
+  scene.add(floorLight);
   const tmp = new THREE.Color();
-  const haze = glowSprite(kit, ACCENT, 2.2);
-  haze.position.set(0, 0.55, 0);
-  haze.material.opacity = 0.28;
-  world.add(haze);
+  const base = new THREE.Vector3(0, 0.2, 1.85);
+  const look = new THREE.Vector3(0, 0.48, -1.0);
 
   return {
-    frameCamera: framer(1.05, 0.62, 0.5, 0.35),
+    frameCamera(camera) { camera.fov = 52; camera.updateProjectionMatrix(); },
     update(t, dt, hover, pointer, camera) {
       const s = t;
       const beat = Math.pow(Math.max(0, Math.sin(s * 2.6)), 5);
+      const flash = Math.pow(Math.max(0, Math.sin(s * 1.9 + 1)), 30);
       ball.rotation.y = s * 0.6;
       spots.forEach(sp => {
         const a = sp.a + s * sp.speed;
-        sp.m.position.set(Math.cos(a) * sp.r * 1.5, 0.004, -0.15 + Math.sin(a) * sp.r * 0.9);
+        if (sp.wall === 0) sp.m.position.set(Math.cos(a) * sp.r * 1.6, 0.004, 0.2 + Math.sin(a) * sp.r * 1.6);
+        else sp.m.position.set(sp.wall === 1 ? -1.77 : 1.77, 0.12 + (0.5 + 0.5 * Math.sin(a * 1.3)) * 0.95, 0.2 + Math.cos(a) * 1.5);
         sp.m.scale.setScalar(0.8 + 0.4 * Math.sin(s * 2 + sp.a));
       });
+      strips.forEach((st, i) => { showColor(s * 0.3 + i * 0.25, tmp); st.material.color.copy(tmp).multiplyScalar(0.6 + beat * 0.5); });
       heads.forEach(h => {
-        h.tilt.rotation.z = (h.i - 2) * 0.22 + Math.sin(s * 0.85 + h.i) * (0.3 + hover * 0.2);
-        h.tilt.rotation.x = 0.55 + Math.sin(s * 0.7 + h.i * 1.6) * (0.45 + hover * 0.2);
+        h.tilt.rotation.z = (h.i - 2.5) * 0.18 + Math.sin(s * 0.85 + h.i) * (0.28 + hover * 0.2);
+        h.tilt.rotation.x = 0.5 + Math.sin(s * 0.7 + h.i * 1.6) * (0.4 + hover * 0.2);
         h.root.rotation.y = Math.sin(s * 0.5 + h.i) * 0.3;
         showColor(s * 0.4 + h.i * 0.8, tmp);
         tintBeam(h.halo, tmp);
       });
-      lasers.rotation.y = Math.sin(s * 0.5) * 0.8;
-      lasers.rotation.x = Math.PI / 2.4 + Math.sin(s * 0.9) * 0.25;
-      rays.forEach((r, i) => { r.rotation.z = (i - 5) * (0.16 + 0.05 * Math.sin(s * 1.2)); });
+      side.forEach(h => {
+        h.tilt.rotation.z = (h.x < 0 ? 0.55 : -0.55) + Math.sin(s * 0.8 + h.k * 2) * 0.25;
+        h.tilt.rotation.x = 0.35 + Math.sin(s * 0.65 + h.k) * 0.35;
+        showColor(s * 0.5 + h.k, tmp);
+        tintBeam(h.halo, tmp);
+      });
+      lasers.rotation.x = Math.PI / 2 + 0.08 + Math.sin(s * 0.9) * 0.1;
+      lasers.rotation.y = Math.sin(s * 0.5) * 0.35;
+      rays.forEach((r, i) => { r.rotation.z = (i - 6.5) * (0.13 + 0.05 * Math.sin(s * 1.2)); });
       decks.forEach((d, i) => { d.rotation.y = s * (i ? 1.6 : -1.3); });
       showColor(s * 0.5, tmp);
-      facade.material.color.copy(tmp).multiplyScalar(0.3 + beat * 0.5);
+      facade.material.color.copy(tmp).multiplyScalar(0.35 + beat * 0.55);
       dj.rotation.z = Math.sin(s * 2.6) * 0.05;
+      strobe.material.opacity = flash * 0.8;
+      floorLight.intensity = 0.9 + beat * 0.7 + flash * 2.4;
+      hazes.forEach((h, i) => {
+        showColor(s * 0.28 + i * 1.2, tmp);
+        h.material.color.copy(tmp);
+        h.material.opacity = 0.16 + beat * 0.1 + flash * 0.2;
+      });
       led.paint(s);
-      haze.material.color.copy(tmp);
-      haze.material.opacity = 0.2 + beat * 0.18;
       crowd.update(s, hover);
-      orbit(camera, Math.sin(t * 0.28) * 16, 10, camera.userData.dist, hover, pointer);
+      insideView(camera, base, look, t, hover, pointer);
     },
   };
 }
