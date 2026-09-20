@@ -27,6 +27,13 @@ body{font-size:17px;line-height:1.6;}
 .navlinks .nav-cta{min-height:44px;margin-left:8px;border:1px solid var(--line);border-radius:999px;color:var(--text);}
 .navlinks .nav-cta:hover{background:var(--text);color:var(--bg);border-color:var(--text);}
 
+/* Sélecteur de langue (EN | FR) : la langue en cours est pleine, l'autre est un lien. */
+.lang-switch{display:inline-flex;align-items:center;margin-left:10px;padding:3px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.06em;}
+.lang-switch .is-current,.navlinks .lang-switch a{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:38px;padding-inline:8px;border-radius:999px;}
+.lang-switch .is-current{background:var(--text);color:var(--bg);}
+.navlinks .lang-switch a{color:var(--muted);}
+.navlinks .lang-switch a:hover{color:var(--text);}
+
 /* Accroche : un show de lumière */
 .hero{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100svh - 72px);display:flex;flex-direction:column;justify-content:flex-end;}
 .stage{position:absolute;inset:0;z-index:-1;pointer-events:none;}
@@ -246,6 +253,8 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
   .navlinks a{padding-inline:8px;}
   .hero h1{font-size:clamp(32px,10.2vw,44px);}
   .navlinks .nav-cta{margin-left:4px;}
+  .lang-switch{margin-left:6px;}
+  .lang-switch .is-current,.navlinks .lang-switch a{min-width:34px;padding-inline:6px;}
   .process{grid-template-columns:1fr;}
   .step-3d{aspect-ratio:16/10;}
   .contact-list dd{font-size:15px;}
@@ -256,8 +265,9 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
   html{scroll-behavior:auto;}
   .frame-media,.plate-cta .ico,.contact-mail .ico,.btn{transition:none;}
 }
-@media (max-width: 400px){
-  .navlinks a[href="#reglages"]{display:none;}
+@media (max-width: 480px){
+  /* Petit écran : « Contact » et le sélecteur de langue suffisent (la page se parcourt en défilant). */
+  .navlinks a[href="#reglages"],.navlinks a[href="#realisations"]{display:none;}
 }
 .scene3d,.step-3d{-webkit-tap-highlight-color:transparent;}
 

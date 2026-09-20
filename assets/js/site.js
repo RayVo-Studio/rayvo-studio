@@ -2,6 +2,19 @@
 
 const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Langue : le choix du visiteur est retenu (anglais par défaut). Quelqu'un qui a choisi le français retrouve /fr/ en revenant à l'accueil.
+document.querySelectorAll('[data-lang-link]').forEach(link => {
+  link.addEventListener('click', () => {
+    try { localStorage.setItem('rayvo-lang', link.dataset.langLink); } catch (error) { /* stockage indisponible : sans importance */ }
+  });
+});
+try {
+  const french = document.querySelector('[data-lang-link="fr"]');
+  if (localStorage.getItem('rayvo-lang') === 'fr' && french && document.documentElement.lang === 'en') {
+    location.replace(french.href + location.hash);
+  }
+} catch (error) { /* stockage indisponible : on reste sur la page demandée */ }
+
 // Défilement doux vers les ancres.
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {

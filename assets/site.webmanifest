@@ -1,8 +1,8 @@
 {
   "name": "RayVo Studio",
   "short_name": "RayVo",
-  "description": "Design lumière, programmation et exploitation lumière pour concerts, festivals et événements live.",
-  "lang": "fr",
+  "description": "Lighting design, programming and operation for concerts, festivals and live events.",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "browser",
