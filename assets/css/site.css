@@ -28,8 +28,8 @@ body{font-size:17px;line-height:1.6;}
 .navlinks .nav-cta:hover{background:var(--text);color:var(--bg);border-color:var(--text);}
 
 /* Sélecteur de langue (EN | FR) : la langue en cours est pleine, l'autre est un lien. */
-.lang-switch{display:inline-flex;align-items:center;margin-left:10px;padding:3px;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.06em;}
-.lang-switch .is-current,.navlinks .lang-switch a{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:38px;padding-inline:8px;border-radius:999px;}
+.lang-switch{display:inline-flex;align-items:center;margin-left:10px;padding:0;border:1px solid var(--line);border-radius:999px;font-size:13px;font-weight:600;letter-spacing:.06em;}
+.lang-switch .is-current,.navlinks .lang-switch a{display:inline-flex;align-items:center;justify-content:center;min-width:42px;min-height:42px;padding-inline:8px;border-radius:999px;}
 .lang-switch .is-current{background:var(--text);color:var(--bg);}
 .navlinks .lang-switch a{color:var(--muted);}
 .navlinks .lang-switch a:hover{color:var(--text);}
@@ -163,11 +163,11 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
 /* Matière commune : mêmes gris que la console, sections alternées, filet de lumière entre les sections */
 @property --ambient{syntax:'<color>';inherits:true;initial-value:transparent;}
 section{position:relative;}
-#specialites,#apropos{background:linear-gradient(180deg,#101116,#0c0d12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(255,255,255,0.04);}
+#audiences,#about{background:linear-gradient(180deg,#101116,#0c0d12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.05),inset 0 -1px 0 rgba(255,255,255,0.04);}
 section + section::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(900px,80%);height:110px;pointer-events:none;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--accent) 65%,transparent),transparent) top / 100% 1px no-repeat,radial-gradient(50% 100% at 50% 0,color-mix(in srgb,var(--accent) 13%,transparent),transparent) top / 100% 100% no-repeat;}
-#realisations{isolation:isolate;overflow-x:clip;--ambient:transparent;transition:--ambient .9s ease;}
-#realisations::before{content:"";position:absolute;inset:0 -5%;z-index:-1;pointer-events:none;background:radial-gradient(60% 46% at 50% 45%,color-mix(in srgb,var(--ambient) 32%,transparent),transparent 72%);opacity:0;transition:opacity .9s ease;}
-#realisations.has-ambient::before{opacity:1;}
+#work{isolation:isolate;overflow-x:clip;--ambient:transparent;transition:--ambient .9s ease;}
+#work::before{content:"";position:absolute;inset:0 -5%;z-index:-1;pointer-events:none;background:radial-gradient(60% 46% at 50% 45%,color-mix(in srgb,var(--ambient) 32%,transparent),transparent 72%);opacity:0;transition:opacity .9s ease;}
+#work.has-ambient::before{opacity:1;}
 
 /* Console grandMA3 en 3D : image d'attente, puis scène 3D qui la remplace en fondu */
 .scene3d{position:absolute;top:0;right:0;bottom:56px;width:60%;z-index:1;cursor:default;}
@@ -254,7 +254,7 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
   .hero h1{font-size:clamp(32px,10.2vw,44px);}
   .navlinks .nav-cta{margin-left:4px;}
   .lang-switch{margin-left:6px;}
-  .lang-switch .is-current,.navlinks .lang-switch a{min-width:34px;padding-inline:6px;}
+  .lang-switch .is-current,.navlinks .lang-switch a{min-width:42px;padding-inline:6px;}
   .process{grid-template-columns:1fr;}
   .step-3d{aspect-ratio:16/10;}
   .contact-list dd{font-size:15px;}
@@ -265,9 +265,22 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
   html{scroll-behavior:auto;}
   .frame-media,.plate-cta .ico,.contact-mail .ico,.btn{transition:none;}
 }
+/* Menu déroulant : seulement sur petit écran (les liens Services et Work quittent la barre, ils sont dans la liste). */
+.menu-toggle,.menu-panel{display:none;}
 @media (max-width: 480px){
-  /* Petit écran : « Contact » et le sélecteur de langue suffisent (la page se parcourt en défilant). */
-  .navlinks a[href="#reglages"],.navlinks a[href="#realisations"]{display:none;}
+  .navlinks a[href="#services"],.navlinks a[href="#work"]{display:none;}
+  .menu-toggle{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;margin-left:6px;padding:0;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--text);cursor:pointer;}
+  .menu-toggle .menu-close,.menu-toggle[aria-expanded="true"] .menu-open{display:none;}
+  .menu-toggle[aria-expanded="true"] .menu-close{display:inline;}
+  .site-nav.menu-open{background:var(--bg);border-bottom-color:var(--line);}
+  .menu-panel{position:absolute;top:100%;left:0;right:0;background:var(--bg);border-bottom:1px solid var(--line);box-shadow:0 24px 40px -20px rgba(0,0,0,.7);}
+  .menu-panel:not([hidden]){display:block;}
+  .menu-panel .wrap{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;gap:0;padding-block:6px 14px;}
+  .menu-panel a{display:flex;align-items:center;min-height:52px;padding-inline:4px;font-size:18px;font-weight:500;color:var(--text);text-decoration:none;border-bottom:1px solid var(--line);}
+  .menu-panel a:last-child{border-bottom:0;}
+}
+@media (max-width: 360px){
+  .navlinks .nav-cta{display:none;} /* « Contact » est dans la liste du menu */
 }
 .scene3d,.step-3d{-webkit-tap-highlight-color:transparent;}
 

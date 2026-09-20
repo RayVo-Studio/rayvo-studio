@@ -15,6 +15,15 @@ try {
   }
 } catch (error) { /* stockage indisponible : on reste sur la page demandée */ }
 
+// Anciennes adresses de sections (avant leur passage en anglais) : les liens déjà partagés continuent de fonctionner.
+const legacyAnchors = { reglages: 'services', specialites: 'audiences', realisations: 'work', apropos: 'about', questions: 'faq', contenu: 'main' };
+const legacyTarget = legacyAnchors[location.hash.slice(1)];
+if (legacyTarget) {
+  history.replaceState(null, '', '#' + legacyTarget);
+  const section = document.getElementById(legacyTarget);
+  if (section) requestAnimationFrame(() => section.scrollIntoView());
+}
+
 // Défilement doux vers les ancres.
 document.querySelectorAll('a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
@@ -35,6 +44,24 @@ if (nav) {
   syncNav();
 }
 
+// Menu déroulant (petit écran) : ouvre et ferme la liste des sections, au clavier comme au doigt.
+const menuToggle = document.querySelector('.menu-toggle');
+const menuPanel = document.getElementById('site-menu');
+if (nav && menuToggle && menuPanel) {
+  const setMenu = open => {
+    menuPanel.hidden = !open;
+    menuToggle.setAttribute('aria-expanded', String(open));
+    nav.classList.toggle('menu-open', open);
+  };
+  menuToggle.addEventListener('click', () => setMenu(menuPanel.hidden));
+  menuPanel.addEventListener('click', event => { if (event.target.closest('a')) setMenu(false); });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && !menuPanel.hidden) { setMenu(false); menuToggle.focus(); }
+  });
+  document.addEventListener('click', event => { if (!menuPanel.hidden && !nav.contains(event.target)) setMenu(false); });
+  window.matchMedia('(min-width:481px)').addEventListener('change', event => { if (event.matches) setMenu(false); });
+}
+
 // Apparitions au scroll : l'état caché n'existe que si le script tourne.
 if (!calm && 'IntersectionObserver' in window) {
   document.documentElement.classList.add('js');
@@ -53,7 +80,7 @@ if (!calm && 'IntersectionObserver' in window) {
 }
 
 // Réalisations : chaque photo donne sa couleur dominante, qui éclaire le cadre et l'ambiance de la section au survol.
-const realisations = document.getElementById('realisations');
+const realisations = document.getElementById('work');
 document.querySelectorAll('.plate').forEach(plate => {
   const media = plate.querySelector('.frame-media');
   const video = plate.querySelector('video[poster]');
