@@ -90,7 +90,7 @@ section{padding-block:var(--section);}
 
 /* Réalisations : grille éditoriale */
 .grid-plates{--h:clamp(280px,36vw,540px);display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(40px,4.5vw,64px) clamp(18px,2.4vw,32px);}
-.plate{grid-column:span 6;display:flex;flex-direction:column;gap:20px;text-decoration:none;color:inherit;}
+.plate{position:relative;grid-column:span 6;display:flex;flex-direction:column;gap:20px;text-decoration:none;color:inherit;}
 .plate:nth-child(4n+1),.plate:nth-child(4n+4){grid-column:span 8;}
 .plate:nth-child(4n+2),.plate:nth-child(4n+3){grid-column:span 4;}
 .plate:last-child:nth-child(4n+1),.plate:last-child:nth-child(4n+3){grid-column:1 / -1;}
@@ -106,6 +106,10 @@ section{padding-block:var(--section);}
 .plate-cta{white-space:nowrap;display:inline-flex;align-items:center;gap:6px;min-height:44px;margin-block:-8px;font-size:15px;font-weight:600;color:var(--muted);text-decoration:none;transition:color .2s ease;}
 .plate-cta .ico{transition:transform .35s var(--ease);}
 @media (hover:hover){
+  /* Laisser la photo porter : la légende/titre passe en overlay au survol/focus plutôt qu'affichée en
+     permanence sous chaque carte (voir docs/CODEMAPS/public.md, "Cartes portfolio — légende en overlay"). */
+  .plate-body{position:absolute;inset:auto 16px 16px 16px;padding:16px 18px 4px;border-radius:calc(var(--radius) - 4px);background:linear-gradient(180deg,transparent,rgba(5,6,10,0.82) 45%);opacity:0;transform:translateY(6px);transition:opacity .3s var(--ease),transform .3s var(--ease);}
+  .plate:hover .plate-body,.plate:focus .plate-body,.plate:focus-within .plate-body{opacity:1;transform:none;}
   .plate:hover .frame-media{transform:scale(1.045);}
   .plate:hover .frame{box-shadow:0 0 0 1px rgba(255,255,255,0.14),0 44px 110px -30px color-mix(in srgb,var(--glow,#7b91c4) 70%,transparent);}
   .plate:hover .plate-cta,.plate-cta:hover{color:var(--accent);}
@@ -192,8 +196,13 @@ footer .wrap{display:flex;justify-content:space-between;align-items:center;flex-
 .js .plate[data-reveal]{opacity:1;transform:none;}
 .js .plate[data-reveal] .frame{clip-path:inset(0 0 100% 0 round var(--radius));transition:clip-path 1.1s var(--ease) var(--dl,0ms);}
 .js .plate[data-reveal].is-in .frame{clip-path:inset(0 0 0 0 round var(--radius));}
-.js .plate[data-reveal] .plate-body{opacity:0;transition:opacity .8s ease calc(var(--dl,0ms) + .3s);}
-.js .plate[data-reveal].is-in .plate-body{opacity:1;}
+/* Sur souris fine, l'apparition de la légende est gérée par la règle survol/focus plus haut
+   (voir @media (hover:hover)) — cette apparition au scroll ne vaut que pour le tactile, où
+   la légende reste visible en permanence (pas de survol pour la découvrir). */
+@media (hover:none){
+  .js .plate[data-reveal] .plate-body{opacity:0;transition:opacity .8s ease calc(var(--dl,0ms) + .3s);}
+  .js .plate[data-reveal].is-in .plate-body{opacity:1;}
+}
 
 /* Matière commune : mêmes gris que la console, sections alternées, filet de lumière entre les sections */
 @property --ambient{syntax:'<color>';inherits:true;initial-value:transparent;}
@@ -298,7 +307,7 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
 @media (prefers-reduced-motion: reduce){
   .hero .line,.hero .lede,.hero .cta-row,.hero-meta{animation:none;}
   html{scroll-behavior:auto;}
-  .frame-media,.plate-cta .ico,.contact-mail .ico,.btn{transition:none;}
+  .frame-media,.plate-cta .ico,.contact-mail .ico,.btn,.plate-body{transition:none;}
 }
 /* Menu déroulant : seulement sur petit écran (les liens Services et Work quittent la barre, ils sont dans la liste). */
 .menu-toggle,.menu-panel{display:none;}
