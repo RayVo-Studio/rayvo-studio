@@ -71,20 +71,6 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/galerie/"/>
   </url>
   <url>
-    <loc>https://rayvo-studio.github.io/rayvo-studio/faq/</loc>
-    <lastmod>2026-09-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/faq/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
-  </url>
-  <url>
-    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/faq/</loc>
-    <lastmod>2026-09-25</lastmod>
-    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/faq/"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
-  </url>
-  <url>
     <loc>https://rayvo-studio.github.io/rayvo-studio/contact/</loc>
     <lastmod>2026-09-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/contact/"/>
