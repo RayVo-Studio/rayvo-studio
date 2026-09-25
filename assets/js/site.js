@@ -59,8 +59,29 @@ if (nav && menuToggle && menuPanel) {
     if (event.key === 'Escape' && !menuPanel.hidden) { setMenu(false); menuToggle.focus(); }
   });
   document.addEventListener('click', event => { if (!menuPanel.hidden && !nav.contains(event.target)) setMenu(false); });
-  window.matchMedia('(min-width:481px)').addEventListener('change', event => { if (event.matches) setMenu(false); });
+  window.matchMedia('(min-width:981px)').addEventListener('change', event => { if (event.matches) setMenu(false); });
 }
+
+// Carrousel d'accueil : index manuel + translateX, flèches et pagination, dégrade en pile d'images sans JS.
+document.querySelectorAll('.carousel[data-module="carousel"]').forEach(carousel => {
+  const slides = [...carousel.querySelectorAll('.carousel-slide')];
+  const dots = [...carousel.querySelectorAll('.carousel-dot')];
+  if (slides.length < 2) return;
+  let index = Math.max(0, slides.findIndex(s => s.classList.contains('is-active')));
+  const show = next => {
+    index = (next + slides.length) % slides.length;
+    slides.forEach((s, i) => s.classList.toggle('is-active', i === index));
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+  };
+  carousel.querySelector('.carousel-prev')?.addEventListener('click', () => show(index - 1));
+  carousel.querySelector('.carousel-next')?.addEventListener('click', () => show(index + 1));
+  dots.forEach((d, i) => d.addEventListener('click', () => show(i)));
+  if (!calm) {
+    let timer = setInterval(() => show(index + 1), 6000);
+    carousel.addEventListener('mouseenter', () => clearInterval(timer));
+    carousel.addEventListener('mouseleave', () => { timer = setInterval(() => show(index + 1), 6000); });
+  }
+});
 
 // Apparitions au scroll : l'état caché n'existe que si le script tourne.
 if (!calm && 'IntersectionObserver' in window) {

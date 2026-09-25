@@ -3,8 +3,8 @@
 > RayVo Studio designs, programs and operates the lighting of your festivals, clubs and live events. One team, from the first idea to the last show: every event gets a lighting identity of its own.
 
 ## Site
-- [RayVo Studio (English)](https://rayvo-studio.github.io/rayvo-studio/): services, work, process, contact
-- [RayVo Studio (Français)](https://rayvo-studio.github.io/rayvo-studio/fr/): version française du site
+- [RayVo Studio (English)](https://rayvo-studio.github.io/rayvo-studio/recrutement/): services, work, process, contact
+- [RayVo Studio (Français)](https://rayvo-studio.github.io/rayvo-studio/fr/recrutement/): version française du site
 
 ## Services
 - Lighting design — Technical drawings, lighting plots and 3D renders: you see the show before the event. Rig layout, equipment choices and art direction designed for the venue and the staging.

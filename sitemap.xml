@@ -2,16 +2,142 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rayvo-studio.github.io/rayvo-studio/</loc>
-    <lastmod>2026-09-21</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/"/>
   </url>
   <url>
     <loc>https://rayvo-studio.github.io/rayvo-studio/fr/</loc>
-    <lastmod>2026-09-21</lastmod>
+    <lastmod>2026-09-25</lastmod>
     <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/qui-sommes-nous/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/qui-sommes-nous/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/qui-sommes-nous/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/qui-sommes-nous/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/qui-sommes-nous/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/qui-sommes-nous/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/qui-sommes-nous/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/qui-sommes-nous/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/realisations/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/realisations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/realisations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/realisations/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/realisations/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/realisations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/realisations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/realisations/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/prestations/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/prestations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/prestations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/prestations/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/prestations/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/prestations/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/prestations/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/prestations/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/galerie/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/galerie/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/galerie/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/galerie/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/galerie/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/galerie/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/galerie/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/galerie/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/faq/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/faq/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/faq/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/faq/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/contact/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/contact/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/contact/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/contact/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/contact/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/contact/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/contact/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/location-backline/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/location-backline/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/location-backline/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/location-backline/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/location-backline/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/location-backline/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/location-backline/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/location-backline/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/installations-lumiere/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/installations-lumiere/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/installations-lumiere/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/installations-lumiere/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/installations-lumiere/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/installations-lumiere/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/installations-lumiere/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/installations-lumiere/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/recrutement/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/recrutement/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/recrutement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/recrutement/"/>
+  </url>
+  <url>
+    <loc>https://rayvo-studio.github.io/rayvo-studio/fr/recrutement/</loc>
+    <lastmod>2026-09-25</lastmod>
+    <xhtml:link rel="alternate" hreflang="en" href="https://rayvo-studio.github.io/rayvo-studio/recrutement/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://rayvo-studio.github.io/rayvo-studio/fr/recrutement/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://rayvo-studio.github.io/rayvo-studio/recrutement/"/>
   </url>
 </urlset>
