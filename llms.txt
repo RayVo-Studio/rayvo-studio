@@ -1,15 +1,18 @@
 # RayVo Studio
 
-> RayVo Studio designs, programs and operates the lighting of your festivals, clubs and live events. One team, from the first idea to the last show: every event gets a lighting identity of its own.
+> RayVo Studio designs and runs the technical side of your projects: event production, installation, lighting design, programming and equipment rental. One team, from the first site visit to on-site operation.
 
 ## Site
 - [RayVo Studio (English)](https://rayvo-studio.github.io/rayvo-studio/recrutement/): services, work, process, contact
 - [RayVo Studio (Français)](https://rayvo-studio.github.io/rayvo-studio/fr/recrutement/): version française du site
 
 ## Services
-- Lighting design — Technical drawings, lighting plots and 3D renders: you see the show before the event. Rig layout, equipment choices and art direction designed for the venue and the staging.
-- Lighting programming — The show is written on the console: moods, sequences and effects timed precisely to the music and the staging.
-- Lighting operation — Live operation on show night, with a technical crew on site from load-in to strike.
+- Event production — We handle the technical side of your event: equipment, installation, programming and live operation, from load-in to load-out.
+- Installation — We install and upgrade lighting, sound, control and programming systems in clubs, venues and public spaces.
+- Design & programming — Show design, technical drawings, 3D renders and lighting programming on the console: the show is written and approved before the event.
+- Technical services — Tailored technical support: preparation, live operation and follow-up, as reinforcement or running your project end to end.
+- Rental — Sound, lighting and backline rental to complete your own set-up or cover a one-off need.
+- Clubs — Designing or upgrading an installation, programming the lighting and ongoing technical support for clubs and nightclubs.
 
 ## Contact
 - Email: contact@rayvostudio.com
