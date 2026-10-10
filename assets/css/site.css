@@ -427,13 +427,15 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
 }
 
 /* Titres de section : petit repère devant le titre (sans surtitre textuel) */
-#clients .sec-head h2::before,#activities .sec-head h2::before,#galerie-preview .sec-head h2::before,#faq-preview .sec-head h2::before{content:"";display:inline-block;width:.46em;height:.46em;margin-right:.4em;vertical-align:.04em;background:var(--accent);-webkit-mask:var(--mk-node) center/contain no-repeat;mask:var(--mk-node) center/contain no-repeat;}
+#clients .sec-head h2::before,#activities .sec-head h2::before,#faq-preview .sec-head h2::before{content:"";display:inline-block;width:.46em;height:.46em;margin-right:.4em;vertical-align:.04em;background:var(--accent);-webkit-mask:var(--mk-node) center/contain no-repeat;mask:var(--mk-node) center/contain no-repeat;}
+#activities .sec-head h2::before{-webkit-mask-image:var(--mk-cross);mask-image:var(--mk-cross);}
 #activities .sec-head::after{content:"";width:72px;height:36px;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-dots) center/contain no-repeat;mask:var(--mk-dots) center/contain no-repeat;}
 
 /* Réalisations : repères de cadrage en haut du cadre + numéro de projet (data-idx) */
 .plate::before,.plate::after{content:"";position:absolute;z-index:3;pointer-events:none;color:color-mix(in srgb,var(--text) 72%,transparent);transition:opacity .6s var(--ease) var(--dl,0ms);}
 .plate::after{inset:19px 19px auto;height:15px;background:linear-gradient(currentColor,currentColor) 0 0/15px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 15px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/15px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 15px no-repeat;}
-.plate::before{content:attr(data-idx);top:19px;left:42px;font-size:11px;font-weight:600;line-height:15px;letter-spacing:.18em;text-shadow:0 0 6px rgba(5,6,10,.7);}
+.plate::before{content:attr(data-idx);content:attr(data-idx) / "";top:19px;left:42px;font-size:11px;font-weight:600;line-height:15px;letter-spacing:.18em;text-shadow:0 0 6px rgba(5,6,10,.7);}
+.plate[data-idx=""]::before{content:none;}
 .js .plate[data-reveal]:not(.is-in)::before,.js .plate[data-reveal]:not(.is-in)::after{opacity:0;}
 
 /* Bandeau d'appel final : arcs en angle, signature de la page */
@@ -449,16 +451,207 @@ footer::before{content:"";position:absolute;inset:0 0 auto;height:6px;pointer-ev
 :root{--mk-cross:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M12 3v18M3 12h18'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E");--mk-quarter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M3 37A34 34 0 0 1 37 3M3 37A22 22 0 0 1 25 15M3 37A10 10 0 0 1 13 27'/%3E%3Ccircle cx='3' cy='37' r='2' fill='%23000' stroke='none'/%3E%3Cpath d='M37 3v6M37 3h-6'/%3E%3C/svg%3E");--mk-ruler:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 11h72'/%3E%3Cpath d='M1 11v-8'/%3E%3Cpath d='M7 11v-4'/%3E%3Cpath d='M13 11v-4'/%3E%3Cpath d='M19 11v-4'/%3E%3Cpath d='M25 11v-8'/%3E%3Cpath d='M31 11v-4'/%3E%3Cpath d='M37 11v-4'/%3E%3Cpath d='M43 11v-4'/%3E%3Cpath d='M49 11v-8'/%3E%3Cpath d='M55 11v-4'/%3E%3Cpath d='M61 11v-4'/%3E%3Cpath d='M67 11v-4'/%3E%3C/svg%3E");--mk-crosses:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M6 2v8M2 6h8'/%3E%3Cpath d='M30 2v8M26 6h8'/%3E%3Cpath d='M54 2v8M50 6h8'/%3E%3Ccircle cx='30' cy='6' r='2'/%3E%3C/svg%3E");}
 .mk{display:block;flex:none;width:var(--mk-w,72px);height:var(--mk-h,36px);background:var(--accent);opacity:.5;pointer-events:none;-webkit-mask:var(--mk-img) center/contain no-repeat;mask:var(--mk-img) center/contain no-repeat;}
 .mk--node{--mk-img:var(--mk-node);--mk-w:18px;--mk-h:18px;}.mk--arcs{--mk-img:var(--mk-arcs);--mk-w:160px;--mk-h:160px;}.mk--dots{--mk-img:var(--mk-dots);}.mk--cross{--mk-img:var(--mk-cross);--mk-w:14px;--mk-h:14px;}.mk--quarter{--mk-img:var(--mk-quarter);--mk-w:40px;--mk-h:40px;}.mk--ruler{--mk-img:var(--mk-ruler);--mk-h:12px;}
-#clients .sec-head::after,#faq-preview .sec-head::after{content:"";flex:none;width:60px;height:12px;background:var(--accent);opacity:.5;-webkit-mask:var(--mk-crosses) center/contain no-repeat;mask:var(--mk-crosses) center/contain no-repeat;}
-#faq-preview .sec-head::after{width:72px;-webkit-mask-image:var(--mk-ruler);mask-image:var(--mk-ruler);}
-#galerie-preview .sec-head h2::after{content:"";display:inline-block;width:.6em;height:.6em;margin-left:.4em;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-quarter) center/contain no-repeat;mask:var(--mk-quarter) center/contain no-repeat;}
+#clients .sec-head::after{content:"";flex:none;width:36px;height:24px;background:var(--accent);opacity:.5;-webkit-mask:var(--sy-grid-a) 0 0/100% 100% no-repeat;mask:var(--sy-grid-a) 0 0/100% 100% no-repeat;}
+#faq-preview .sec-head::after{content:"";flex:none;width:72px;height:12px;background:var(--accent);opacity:.5;-webkit-mask:var(--mk-ruler) center/contain no-repeat;mask:var(--mk-ruler) center/contain no-repeat;}
 /* Repère d'enregistrement au centre de chaque séparateur de section */
-#about-teaser::before,#clients::before,#activities::before,#galerie-preview::before,#faq-preview::before{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;translate:-50% 0;pointer-events:none;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-cross) center/contain no-repeat;mask:var(--mk-cross) center/contain no-repeat;}
+#about-teaser::before,#clients::before,#activities::before,#galerie-preview::before,#faq-preview::before{content:"";position:absolute;top:-18px;left:max(0px,calc(50% - 620px));width:min(100%,1240px);height:36px;pointer-events:none;background:var(--accent);opacity:.55;--mk-reg-base:var(--mk-cross) var(--gutter) 50%/14px 14px no-repeat,var(--mk-node) 50% 50%/14px 14px no-repeat,var(--mk-cross) calc(100% - var(--gutter)) 50%/14px 14px no-repeat;--mk-reg:var(--mk-reg-base);-webkit-mask:var(--mk-reg);mask:var(--mk-reg);}
 /* Activités : numéro discret dans l'angle de chaque tuile */
 .activities-grid{counter-reset:act;}
 .activity-tile{position:relative;}
-.activity-tile::before{counter-increment:act;content:"A" counter(act,decimal-leading-zero);position:absolute;top:9px;left:14px;font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--muted);opacity:.7;pointer-events:none;}
+.activity-tile::before{counter-increment:act;content:"A" counter(act,decimal-leading-zero);content:"A" counter(act,decimal-leading-zero) / "";position:absolute;top:9px;left:14px;font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--muted);opacity:.7;pointer-events:none;}
 .activity-tile:hover::before{color:inherit;}
-/* Réalisations : trois variantes d'index, alternées */
-.plate:nth-child(3n+2)::before{content:attr(data-idx) " —";}
-.plate:nth-child(3n)::before{content:"N° " attr(data-idx);}
+
+/* Ligne de construction après les boutons « voir plus » de l'accueil : filet fin, graduations sur les réalisations */
+#work .sec-more,#about-teaser .sec-more,#galerie-preview .sec-more{display:flex;align-items:center;gap:20px;}
+#work .sec-more::after,#about-teaser .sec-more::after,#galerie-preview .sec-more::after{content:"";flex:1;height:7px;background:linear-gradient(var(--line),var(--line)) 0 50%/100% 1px no-repeat;-webkit-mask:linear-gradient(90deg,#000,transparent);mask:linear-gradient(90deg,#000,transparent);}
+#work .sec-more::after{background:linear-gradient(var(--line),var(--line)) 0 100%/100% 1px no-repeat,repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 24px) 0 0/100% 6px no-repeat;}
+@media (max-width:520px){
+  /* Téléphone : l'index passe dans la ligne de la tuile, et les motifs d'angle de titre (qui retomberaient sous le titre) sont masqués */
+  .activity-tile::before{position:static;flex:none;width:3em;}
+  .activity-tile span{flex:1;}
+  #clients .sec-head::after,#activities .sec-head::after,#faq-preview .sec-head::after{display:none;}
+}
+
+/* ============================================================
+   Micrographics, 4e passe : densité (accueil uniquement)
+   Mêmes tailles, mêmes traits (1 px) et mêmes teintes ; on ajoute des détails, pas des formes plus grandes.
+   Tout est décor (pseudo-éléments, pointer-events:none) ; le texte généré a une valeur alternative vide.
+   ============================================================ */
+
+/* Après le titre : ligne interrompue (clients), annotation de plage (activités) */
+#activities .sec-head h2::after{content:"A01–07";content:"A01–07" / "";margin-left:.7em;vertical-align:.95em;font-size:11px;font-weight:600;letter-spacing:.18em;color:var(--muted);opacity:.7;}
+
+/* Réalisations : croix de centrage en haut des grands cadres, et règles de repérage dans les marges (grands écrans) */
+#work .grid-plates{position:relative;}
+@media (min-width:1366px){
+  #work .grid-plates::before{content:"";position:absolute;top:0;bottom:0;pointer-events:none;opacity:.5;-webkit-mask:linear-gradient(transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(transparent,#000 6%,#000 94%,transparent);}
+  #work .grid-plates::before{left:-56px;width:10px;background:repeating-linear-gradient(180deg,var(--accent) 0 1px,transparent 1px 240px) 0 0/10px 100%,repeating-linear-gradient(180deg,var(--accent) 0 1px,transparent 1px 48px) 0 0/5px 100%;background-repeat:no-repeat;}
+}
+
+/* Présentation : matrice de points dans la marge libre sous le titre */
+#about-teaser .about{position:relative;}
+@media (min-width:981px){
+  #about-teaser .about::before{content:"";position:absolute;left:0;bottom:24px;width:72px;height:36px;pointer-events:none;background:var(--accent);opacity:.4;-webkit-mask:var(--mk-dots) center/contain no-repeat;mask:var(--mk-dots) center/contain no-repeat;}
+}
+
+/* Activités : un symbole composé sur les tuiles impaires, toujours dans le coin haut-droit (grille commune) */
+.activity-tile:nth-child(odd)::after{content:"";position:absolute;pointer-events:none;opacity:.45;}
+
+/* Galerie : repère d'angle sur les vignettes, en haut à gauche puis en bas à droite en alternance */
+.ig-thumb{position:relative;}
+.ig-thumb::after{content:"";position:absolute;width:11px;height:11px;pointer-events:none;border:0 solid color-mix(in srgb,var(--text) 70%,transparent);}
+.ig-thumb:nth-child(odd)::after{top:9px;left:9px;border-width:1px 0 0 1px;}
+.ig-thumb:nth-child(even)::after{bottom:9px;right:9px;border-width:0 1px 1px 0;}
+
+/* FAQ : index Q01… à droite de chaque question */
+#faq-preview .faq-group{counter-reset:q;}
+#faq-preview .faq-item{position:relative;}
+#faq-preview .faq-item::before{counter-increment:q;content:"Q" counter(q,decimal-leading-zero);content:"Q" counter(q,decimal-leading-zero) / "";position:absolute;top:10px;right:0;pointer-events:none;font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--muted);opacity:.7;}
+
+/* Bandeau final et pied de page de l'accueil : pendants du côté gauche, repères aux bords du contenu */
+@media (min-width:761px){
+  #faq-preview ~ .cta-band .cta-band-inner{position:relative;}
+  #faq-preview ~ .cta-band .cta-band-inner::before{content:"";position:absolute;left:0;bottom:0;width:72px;height:36px;pointer-events:none;background:var(--accent);opacity:.35;-webkit-mask:var(--mk-dots) center/contain no-repeat;mask:var(--mk-dots) center/contain no-repeat;}
+}
+main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;left:max(0px,calc(50% - 620px));width:min(100%,1240px);height:14px;pointer-events:none;background:var(--accent);opacity:.45;--mk-reg:var(--mk-cross) var(--gutter) 50%/14px 14px no-repeat,var(--mk-cross) calc(100% - var(--gutter)) 50%/14px 14px no-repeat;-webkit-mask:var(--mk-reg);mask:var(--mk-reg);}
+
+/* ============================================================
+   Micrographics, 5e passe : encore ~30 % de détails, accueil uniquement
+   ============================================================ */
+
+/* Séparateurs : même base (croix · nœud · croix), un complément différent selon la section */
+
+/* Ils nous font confiance : angles de cadrage autour de la zone (les cases ne sont pas touchées) et courte graduation dessous */
+#clients .clients-band{position:relative;}
+#clients .clients-band::before{content:"";position:absolute;inset:-14px;pointer-events:none;opacity:.5;background:linear-gradient(var(--accent),var(--accent)) 0 0/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 0/1px 12px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 0/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 0/1px 12px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 100%/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 100%/1px 12px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/1px 12px no-repeat;}
+
+
+/* Galerie : graduation à gauche et croix à droite au-dessus de la bande de vignettes (le titre n'a plus de motif à sa droite) */
+#galerie-preview .ig-strip{position:relative;}
+#galerie-preview .ig-strip::before{content:"";position:absolute;top:-20px;left:0;width:96px;height:5px;pointer-events:none;opacity:.5;background:repeating-linear-gradient(90deg,var(--accent) 0 1px,transparent 1px 6px);}
+#galerie-preview .ig-strip::after{content:"";position:absolute;top:-30px;right:0;width:36px;height:24px;pointer-events:none;opacity:.5;background:var(--accent);-webkit-mask:var(--sy-grid-a) 0 0/100% 100% no-repeat;mask:var(--sy-grid-a) 0 0/100% 100% no-repeat;}
+
+/* FAQ : dans les marges (grands écrans), ligne de construction interrompue à gauche et graduation à droite */
+@media (min-width:1366px){
+  #faq-preview .faq-group{position:relative;}
+  #faq-preview .faq-group::before,#faq-preview .faq-group::after{content:"";position:absolute;top:0;bottom:0;pointer-events:none;opacity:.45;-webkit-mask:linear-gradient(transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(transparent,#000 8%,#000 92%,transparent);}
+  #faq-preview .faq-group::before{left:-48px;width:9px;background:repeating-linear-gradient(180deg,var(--accent) 0 6px,transparent 6px 14px) 4px 0/1px 100% no-repeat,linear-gradient(var(--accent),var(--accent)) 0 0/9px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 100%/9px 1px no-repeat;}
+  #faq-preview .faq-group::after{right:-48px;width:8px;background:repeating-linear-gradient(180deg,var(--accent) 0 1px,transparent 1px 20px) 0 0/8px 100% no-repeat,repeating-linear-gradient(180deg,var(--accent) 0 1px,transparent 1px 100px) 0 0/12px 100% no-repeat;}
+}
+
+
+/* ============================================================
+   Alphabet géométrique modulaire (6e passe)
+   Règles de construction communes à tous les symboles : trait 1,2 px (1 unité = 1 px rendu, jamais mis à l'échelle),
+   point plein r 1,4, anneau r 3,2, module 6 px, arcs centrés sur un angle ou un nœud, formes ouvertes, 2 à 4 éléments par symbole.
+   Familles : angles (corner, corner-arc, corner-dot + miroirs), axes (axis), arcs (semi, orbit), grilles (grid-a, grid-b, grid-s),
+   règles et pas (scale, step), faisceaux (beam). Variantes « -s » = même dessin en plus court (tuiles, séparateurs de FAQ).
+   Chaque symbole est un masque SVG : la couleur vient toujours de la palette (background), jamais du SVG.
+   ============================================================ */
+:root{
+  --sy-corner:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M.6 14.4V.6H14.4'/%3E%3C/svg%3E");
+  --sy-corner-r:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M14.4 14.4V.6H.6'/%3E%3C/svg%3E");
+  --sy-corner-arc:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M.6 14.4V.6H14.4M.6 8.6A8 8 0 0 0 8.6 .6'/%3E%3Ccircle cx='6.3' cy='6.3' r='1.2' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-corner-arc-r:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M14.4 14.4V.6H.6M14.4 8.6A8 8 0 0 1 6.4 .6'/%3E%3Ccircle cx='8.7' cy='6.3' r='1.2' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-corner-dot:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M.6 14.4V.6H14.4'/%3E%3Ccircle cx='7.5' cy='7.5' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-corner-dot-r:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M14.4 14.4V.6H.6'/%3E%3Ccircle cx='7.5' cy='7.5' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-plus:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M4.5 0V9M0 4.5H9'/%3E%3C/svg%3E");
+  --sy-axis:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 10' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 5H31' stroke-dasharray='5 3'/%3E%3Ccircle cx='36' cy='5' r='3.2'/%3E%3Ccircle cx='46' cy='5' r='1.4' fill='%23000' stroke='none'/%3E%3Cpath d='M50 5h6'/%3E%3C/svg%3E");
+  --sy-axis-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 8' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 4H12' stroke-dasharray='4 3'/%3E%3Ccircle cx='17' cy='4' r='2.6'/%3E%3Ccircle cx='25' cy='4' r='1.2' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-semi:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M4 22A20 20 0 0 1 44 22M0 22.4H48M24 22V15'/%3E%3Ccircle cx='24' cy='2' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-orbit:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M18 6A12 12 0 1 1 6 18M18 15v6M15 18h6'/%3E%3Ccircle cx='18' cy='6' r='1.6' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-grid-a:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='6' cy='6' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='6' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='18' cy='6' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='18' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='30' cy='6' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='30' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='18' cy='6' r='4'/%3E%3Cpath d='M6 6L18 18'/%3E%3C/svg%3E");
+  --sy-grid-b:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M1 10V1H10M29 20V29H20M15 11v8M11 15h8'/%3E%3Ccircle cx='29' cy='1' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='1' cy='29' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-grid-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 10' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='3' cy='3' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='9' cy='3' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='15' cy='3' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='3' cy='8' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='9' cy='8' r='2.2'/%3E%3C/svg%3E");
+  --sy-scale:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 10' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 9.4H46'/%3E%3Cpath d='M1 9.4v-8'/%3E%3Cpath d='M7 9.4v-4'/%3E%3Cpath d='M13 9.4v-4'/%3E%3Cpath d='M19 9.4v-4'/%3E%3Cpath d='M25 9.4v-8'/%3E%3Cpath d='M31 9.4v-4'/%3E%3Cpath d='M37 9.4v-4'/%3E%3Cpath d='M43 9.4v-4'/%3E%3Ccircle cx='54' cy='6' r='3.2'/%3E%3C/svg%3E");
+  --sy-scale-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 8' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 7.4H28'/%3E%3Cpath d='M1 7.4v-6'/%3E%3Cpath d='M7 7.4v-3'/%3E%3Cpath d='M13 7.4v-3'/%3E%3Cpath d='M19 7.4v-3'/%3E%3Cpath d='M25 7.4v-6'/%3E%3C/svg%3E");
+  --sy-step:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M1 23H10V13H22V3H35'/%3E%3Ccircle cx='10' cy='13' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='22' cy='3' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-step-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M1 11H8V6H15V1H23'/%3E%3Ccircle cx='8' cy='6' r='1.2' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-beam:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='5' cy='12' r='3.2'/%3E%3Cpath d='M8 11L55 2M8 13L55 22M30 6.8A14 14 0 0 1 30 17.2'/%3E%3Ccircle cx='55' cy='2' r='1.3' fill='%23000' stroke='none'/%3E%3Ccircle cx='55' cy='22' r='1.3' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-beam-s:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 14' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='3' cy='7' r='2.2'/%3E%3Cpath d='M5.5 6.5L27 1.5M5.5 7.5L27 12.5'/%3E%3Ccircle cx='27' cy='1.5' r='1.1' fill='%23000' stroke='none'/%3E%3Ccircle cx='27' cy='12.5' r='1.1' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-corner-dot-br:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 15 15' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M14.4 .6V14.4H.6'/%3E%3Ccircle cx='7.5' cy='7.5' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+}
+.mk--axis{--mk-img:var(--sy-axis);--mk-w:56px;--mk-h:10px;}.mk--semi{--mk-img:var(--sy-semi);--mk-w:48px;--mk-h:24px;}.mk--orbit{--mk-img:var(--sy-orbit);--mk-w:36px;--mk-h:36px;}
+.mk--grid-a{--mk-img:var(--sy-grid-a);--mk-w:36px;--mk-h:24px;}.mk--grid-b{--mk-img:var(--sy-grid-b);--mk-w:30px;--mk-h:30px;}.mk--scale{--mk-img:var(--sy-scale);--mk-w:60px;--mk-h:10px;}
+.mk--step{--mk-img:var(--sy-step);--mk-w:36px;--mk-h:24px;}.mk--beam{--mk-img:var(--sy-beam);--mk-w:56px;--mk-h:24px;}
+
+/* Séparateurs : même base (croix · nœud · croix) ; de chaque côté du nœud, une paire de symboles différente par section */
+#about-teaser::before{--mk-reg:var(--mk-reg-base),var(--sy-axis) calc(50% + -68px) 50%/56px 10px no-repeat,var(--sy-grid-a) calc(50% + 58px) 50%/36px 24px no-repeat;}
+#clients::before{--mk-reg:var(--mk-reg-base),var(--sy-semi) calc(50% + -64px) 50%/48px 24px no-repeat,var(--sy-signal) calc(50% + 68px) 50%/56px 14px no-repeat;}
+#activities::before{--mk-reg:var(--mk-reg-base),var(--sy-step) calc(50% + -58px) 50%/36px 24px no-repeat,var(--sy-beam) calc(50% + 68px) 50%/56px 24px no-repeat;}
+#galerie-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-radial) calc(50% + -58px) 50%/36px 36px no-repeat,var(--sy-coords) calc(50% + 60px) 50%/40px 30px no-repeat;}
+#faq-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-network) calc(50% + -64px) 50%/48px 24px no-repeat,var(--sy-dial) calc(50% + 58px) 50%/36px 20px no-repeat;}
+
+/* Réalisations : trois assemblages d'angles selon la position dans la mosaïque (grands cadres, cadre étroit, cadre étroit inversé) */
+.plate:nth-child(4n+1)::after,.plate:nth-child(4n+4)::after{background:currentColor;-webkit-mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-plus) 50% 3px/9px 9px no-repeat;mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-plus) 50% 3px/9px 9px no-repeat;}
+.plate:nth-child(4n+3)::after{background:currentColor;-webkit-mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat;mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat;}
+
+
+/* Activités : symboles des tuiles impaires */
+.activity-tile:nth-child(odd)::after{background:currentColor;-webkit-mask:var(--m) 0 0/100% 100% no-repeat;mask:var(--m) 0 0/100% 100% no-repeat;}
+.activity-tile:nth-child(1)::after{top:10px;right:12px;width:15px;height:15px;--m:var(--sy-corner-arc-r);}
+.activity-tile:nth-child(3)::after{top:10px;right:14px;width:18px;height:10px;--m:var(--sy-grid-s);}
+.activity-tile:nth-child(5)::after{top:10px;right:12px;width:15px;height:15px;--m:var(--sy-corner-dot-r);}
+.activity-tile:nth-child(7)::after{top:9px;right:12px;width:28px;height:14px;--m:var(--sy-beam-s);}
+
+
+/* Galerie : deux vignettes reçoivent un angle composé à la place de l'angle simple */
+.ig-thumb:nth-child(5)::after{width:15px;height:15px;border:0;background:color-mix(in srgb,var(--text) 70%,transparent);-webkit-mask:var(--sy-corner-arc) 0 0/100% 100% no-repeat;mask:var(--sy-corner-arc) 0 0/100% 100% no-repeat;}
+.ig-thumb:nth-child(4)::after{width:15px;height:15px;border:0;background:color-mix(in srgb,var(--text) 70%,transparent);-webkit-mask:var(--sy-corner-dot-br) 0 0/100% 100% no-repeat;mask:var(--sy-corner-dot-br) 0 0/100% 100% no-repeat;}
+
+/* ============================================================
+   Alphabet, famille B : schémas techniques abstraits (7e passe)
+   Dessins purement graphiques : aucune mesure ni donnée réelle, rien qui représente une installation du studio.
+   radial · coords · network · signal · dial · module · fader · traj · rings
+   ============================================================ */
+:root{
+  --sy-radial:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='18' cy='18' r='9'/%3E%3Cpath d='M30 18L33.5 18M26.5 26.5L30 30M18 30L18 33.5M9.5 26.5L7 29M6 18L2.5 18M9.5 9.5L7 7M18 6L18 2.5M26.5 9.5L29 7'/%3E%3Ccircle cx='18' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-coords:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 30' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M3 2V27H38M3 9h4M3 15h4M3 21h4M11 27v-4M19 27v-4M27 27v-4'/%3E%3Cpath d='M22 12V27M22 12H3' stroke-dasharray='2 2'/%3E%3Ccircle cx='22' cy='12' r='2' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-network:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Ccircle cx='5' cy='18' r='3.2'/%3E%3Ccircle cx='20' cy='6' r='2' fill='%23000' stroke='none'/%3E%3Ccircle cx='34' cy='16' r='3.2'/%3E%3Ccircle cx='44' cy='5' r='1.4' fill='%23000' stroke='none'/%3E%3Cpath d='M7.5 16L18.4 7.2M21.6 7.2L31.4 14.1M36.2 13.6L43.1 6'/%3E%3C/svg%3E");
+  --sy-signal:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 14' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 11H8V3H18V11H26V3H30V11H40V7H48'/%3E%3Ccircle cx='53' cy='7' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-dial:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 20' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M4 18A14 14 0 0 1 32 18M32 18L35 18M30.1 11L32.7 9.5M25 5.9L26.5 3.3M18 4L18 1M11 5.9L9.5 3.3M5.9 11L3.3 9.5M4 18L1 18M18 18L23 9.3'/%3E%3Ccircle cx='18' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-module:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M20 1H1V19H20M20 10H29'/%3E%3Ccircle cx='8' cy='7' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='8' cy='13' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='14' cy='10' r='1.1' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-fader:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 36' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M5 0V14M5 22V36M1 14H9V22H1Z'/%3E%3C/svg%3E");
+  --sy-traj:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M4 19C16 19 18 5 30 5S40 9 42 9' stroke-dasharray='4 3'/%3E%3Ccircle cx='3' cy='19' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='45' cy='9' r='3'/%3E%3C/svg%3E");
+  --sy-rings:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M15 2A13 13 0 0 1 28 15M15 24A9 9 0 0 1 6 15M20 15A5 5 0 1 1 15 10'/%3E%3Ccircle cx='15' cy='15' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+}
+.mk--radial{--mk-img:var(--sy-radial);--mk-w:36px;--mk-h:36px;}.mk--coords{--mk-img:var(--sy-coords);--mk-w:40px;--mk-h:30px;}.mk--network{--mk-img:var(--sy-network);--mk-w:48px;--mk-h:24px;}
+.mk--signal{--mk-img:var(--sy-signal);--mk-w:56px;--mk-h:14px;}.mk--dial{--mk-img:var(--sy-dial);--mk-w:36px;--mk-h:20px;}.mk--module{--mk-img:var(--sy-module);--mk-w:30px;--mk-h:20px;}
+.mk--fader{--mk-img:var(--sy-fader);--mk-w:10px;--mk-h:36px;}.mk--traj{--mk-img:var(--sy-traj);--mk-w:48px;--mk-h:24px;}.mk--rings{--mk-img:var(--sy-rings);--mk-w:30px;--mk-h:30px;}
+
+
+/* ============================================================
+   Titres, boutons et liens d'action : même système que les micrographics (accueil)
+   Mêmes règles partout : trait 1 px, teinte --accent (ou --line pour les filets), points r 1,5 px, longueurs 6 / 16 / 40 px,
+   état actif = le segment s'allonge (survol et focus clavier), jamais d'animation permanente. Rien ne change de dimension.
+   ============================================================ */
+
+/* Titres : un filet interrompu relie le titre au motif de droite (Clients, Activités, FAQ ; pas Galerie) */
+@media (min-width:761px){
+  #clients .sec-head::before,#activities .sec-head::before,#faq-preview .sec-head::before{content:"";order:1;flex:1;align-self:center;min-width:24px;height:1px;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--accent) 45%,transparent) 0 6px,transparent 6px 12px);}
+  #clients .sec-head::after,#activities .sec-head::after,#faq-preview .sec-head::after{order:2;}
+}
+/* Titre de la présentation : sous-lignage en axe interrompu (ligne, anneau, point), sans décaler le texte */
+#about-teaser .about-title{position:relative;}
+#about-teaser .about-title::after{content:"";position:absolute;left:0;bottom:-22px;width:56px;height:10px;pointer-events:none;opacity:.6;background:var(--accent);-webkit-mask:var(--sy-axis) 0 0/100% 100% no-repeat;mask:var(--sy-axis) 0 0/100% 100% no-repeat;}
+
+/* Boutons secondaires de l'accueil : un repère à gauche du bouton qui s'allonge au survol et au focus */
+#work .btn-ghost,#about-teaser .btn-ghost,#galerie-preview .btn-ghost{position:relative;}
+#work .btn-ghost::before,#about-teaser .btn-ghost::before,#galerie-preview .btn-ghost::before{content:"";position:absolute;right:calc(100% + 8px);top:50%;width:6px;height:1px;pointer-events:none;background:var(--accent);opacity:.7;transition:width .3s var(--ease);}
+#work .btn-ghost:is(:hover,:focus-visible)::before,#about-teaser .btn-ghost:is(:hover,:focus-visible)::before,#galerie-preview .btn-ghost:is(:hover,:focus-visible)::before{width:16px;}
+
+/* Bouton principal du bandeau final : filets de mesure de chaque côté, fondus vers l'extérieur (écrans ≥ 761 px) */
+@media (min-width:761px){
+  #faq-preview ~ .cta-band .btn-primary{position:relative;}
+  #faq-preview ~ .cta-band .btn-primary::before,#faq-preview ~ .cta-band .btn-primary::after{content:"";position:absolute;top:50%;width:40px;height:1px;pointer-events:none;opacity:.65;transition:width .3s var(--ease);}
+  #faq-preview ~ .cta-band .btn-primary::before{right:calc(100% + 14px);background:linear-gradient(90deg,transparent,var(--accent)) 0 0/100% 1px no-repeat;}
+  #faq-preview ~ .cta-band .btn-primary::after{left:calc(100% + 14px);background:linear-gradient(270deg,transparent,var(--accent)) 0 0/100% 1px no-repeat;}
+  #faq-preview ~ .cta-band .btn-primary:is(:hover,:focus-visible)::before,#faq-preview ~ .cta-band .btn-primary:is(:hover,:focus-visible)::after{width:64px;}
+}
+
+/* Liens d'action des réalisations : soulignement fin qui se trace au survol et au focus */
+.plate-cta{background:linear-gradient(currentColor,currentColor) 0 calc(50% + 13px)/0 1px no-repeat;transition:color .2s ease,background-size .35s var(--ease);}
+.plate:is(:hover,:focus-visible) .plate-cta,.plate-cta:is(:hover,:focus-visible){background-size:100% 1px;}
+@media (prefers-reduced-motion:reduce){
+  #work .btn-ghost::before,#about-teaser .btn-ghost::before,#galerie-preview .btn-ghost::before,#faq-preview ~ .cta-band .btn-primary::before,#faq-preview ~ .cta-band .btn-primary::after,.plate-cta{transition:none;}
+}
