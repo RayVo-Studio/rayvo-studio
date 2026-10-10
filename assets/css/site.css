@@ -576,15 +576,13 @@ main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;lef
 .mk--step{--mk-img:var(--sy-step);--mk-w:36px;--mk-h:24px;}.mk--beam{--mk-img:var(--sy-beam);--mk-w:56px;--mk-h:24px;}
 
 /* Séparateurs : même base (croix · nœud · croix) ; de chaque côté du nœud, une paire de symboles différente par section */
-#about-teaser::before{--mk-reg:var(--mk-reg-base),var(--sy-axis) calc(50% + -68px) 50%/56px 10px no-repeat,var(--sy-grid-a) calc(50% + 58px) 50%/36px 24px no-repeat;}
-#clients::before{--mk-reg:var(--mk-reg-base),var(--sy-semi) calc(50% + -64px) 50%/48px 24px no-repeat,var(--sy-signal) calc(50% + 68px) 50%/56px 14px no-repeat;}
-#activities::before{--mk-reg:var(--mk-reg-base),var(--sy-step) calc(50% + -58px) 50%/36px 24px no-repeat,var(--sy-beam) calc(50% + 68px) 50%/56px 24px no-repeat;}
-#galerie-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-radial) calc(50% + -58px) 50%/36px 36px no-repeat,var(--sy-coords) calc(50% + 60px) 50%/40px 30px no-repeat;}
-#faq-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-network) calc(50% + -64px) 50%/48px 24px no-repeat,var(--sy-dial) calc(50% + 58px) 50%/36px 20px no-repeat;}
+#about-teaser::before{--mk-reg:var(--mk-reg-base),var(--sy-sector) calc(50% + -58px) 50%/36px 36px no-repeat,var(--sy-grid-a) calc(50% + 58px) 50%/36px 24px no-repeat;}
+#clients::before{--mk-reg:var(--mk-reg-base),var(--sy-compass) calc(50% + -55px) 50%/30px 30px no-repeat,var(--sy-signal) calc(50% + 68px) 50%/56px 14px no-repeat;}
+#activities::before{--mk-reg:var(--mk-reg-base),var(--sy-fan) calc(50% + -58px) 50%/36px 24px no-repeat,var(--sy-beam) calc(50% + 68px) 50%/56px 24px no-repeat;}
+#galerie-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-vector) calc(50% + -58px) 50%/36px 24px no-repeat,var(--sy-coords) calc(50% + 60px) 50%/40px 30px no-repeat;}
+#faq-preview::before{--mk-reg:var(--mk-reg-base),var(--sy-frame-dots) calc(50% + -55px) 50%/30px 30px no-repeat,var(--sy-dial) calc(50% + 58px) 50%/36px 20px no-repeat;}
 
 /* Réalisations : trois assemblages d'angles selon la position dans la mosaïque (grands cadres, cadre étroit, cadre étroit inversé) */
-.plate:nth-child(4n+1)::after,.plate:nth-child(4n+4)::after{background:currentColor;-webkit-mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-plus) 50% 3px/9px 9px no-repeat;mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-plus) 50% 3px/9px 9px no-repeat;}
-.plate:nth-child(4n+3)::after{background:currentColor;-webkit-mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat;mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat;}
 
 
 /* Activités : symboles des tuiles impaires */
@@ -637,8 +635,6 @@ main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;lef
 
 /* Boutons secondaires de l'accueil : un repère à gauche du bouton qui s'allonge au survol et au focus */
 #work .btn-ghost,#about-teaser .btn-ghost,#galerie-preview .btn-ghost{position:relative;}
-#work .btn-ghost::before,#about-teaser .btn-ghost::before,#galerie-preview .btn-ghost::before{content:"";position:absolute;right:calc(100% + 8px);top:50%;width:6px;height:1px;pointer-events:none;background:var(--accent);opacity:.7;transition:width .3s var(--ease);}
-#work .btn-ghost:is(:hover,:focus-visible)::before,#about-teaser .btn-ghost:is(:hover,:focus-visible)::before,#galerie-preview .btn-ghost:is(:hover,:focus-visible)::before{width:16px;}
 
 /* Bouton principal du bandeau final : filets de mesure de chaque côté, fondus vers l'extérieur (écrans ≥ 761 px) */
 @media (min-width:761px){
@@ -655,3 +651,86 @@ main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;lef
 @media (prefers-reduced-motion:reduce){
   #work .btn-ghost::before,#about-teaser .btn-ghost::before,#galerie-preview .btn-ghost::before,#faq-preview ~ .cta-band .btn-primary::before,#faq-preview ~ .cta-band .btn-primary::after,.plate-cta{transition:none;}
 }
+
+/* ============================================================
+   Direction « micrographics » (8e passe) : titres, boutons et cadres construits comme un seul système
+   Fonctions des motifs : structurer (séparateurs, règle de la mosaïque) · identifier (index 01…, A01–07, Q01…) · encadrer (angles des cadres, cadre ouvert des titres et boutons)
+   · annoter (A01–07, filets) · relier (filet de titre, paires des séparateurs). Cinq symboles composés à silhouette propre :
+   sector (secteur gradué), compass (réticule à arc), frame-dots (carré ouvert, coin remplacé par un anneau, grille de points incomplète), fan (quarts de cercle emboîtés), vector (angle, arc, pointe).
+   ============================================================ */
+:root{
+  --sy-sector:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M4 4V32H32A28 28 0 0 0 4 4M4 16A16 16 0 0 1 20 32'/%3E%3Ccircle cx='4' cy='32' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='23.8' cy='12.2' r='1.6' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-compass:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M15 0V4M15 26V30M0 15H4M26 15H30M15 2A13 13 0 0 1 28 15'/%3E%3Ccircle cx='15' cy='15' r='8'/%3E%3Ccircle cx='19' cy='11' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-frame-dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M2 28V2H21M28 9V28H2'/%3E%3Ccircle cx='25' cy='5' r='3.2'/%3E%3Ccircle cx='10' cy='10' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='18' cy='10' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='10' cy='18' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-fan:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M3 3V21H30M3 15A6 6 0 0 1 9 21M3 9A12 12 0 0 1 15 21M3 3A18 18 0 0 1 21 21'/%3E%3Ccircle cx='3' cy='21' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-vector:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 24' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M3 21L30 6M3 21H33M15 21A12 12 0 0 0 13.5 15.2M30 6L24.5 6.6M30 6L27.3 10.8'/%3E%3Ccircle cx='3' cy='21' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+}
+.mk--sector{--mk-img:var(--sy-sector);--mk-w:36px;--mk-h:36px;}.mk--compass{--mk-img:var(--sy-compass);--mk-w:30px;--mk-h:30px;}.mk--frame-dots{--mk-img:var(--sy-frame-dots);--mk-w:30px;--mk-h:30px;}
+.mk--fan{--mk-img:var(--sy-fan);--mk-w:36px;--mk-h:24px;}.mk--vector{--mk-img:var(--sy-vector);--mk-w:36px;--mk-h:24px;}
+
+/* Titres : une famille de repère par section, intégré à la ligne du titre (Galerie : repère à gauche seulement, rien à droite) */
+#galerie-preview .sec-head h2::before{content:"";display:inline-block;width:.46em;height:.46em;margin-right:.4em;vertical-align:.04em;background:var(--accent);-webkit-mask:var(--sy-compass) center/contain no-repeat;mask:var(--sy-compass) center/contain no-repeat;}
+#faq-preview .sec-head h2::before{-webkit-mask-image:var(--sy-frame-dots);mask-image:var(--sy-frame-dots);}
+/* Clients : cadre ouvert asymétrique (angles haut-gauche et bas-droite) autour du titre */
+#clients .sec-head h2,#faq-preview .sec-head h2{position:relative;}
+#clients .sec-head h2::after{content:"";position:absolute;inset:-9px -12px;pointer-events:none;opacity:.55;background:linear-gradient(var(--accent),var(--accent)) 0 0/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 0/1px 12px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/12px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/1px 12px no-repeat;}
+/* FAQ : ligne de construction partielle sous le titre, qui finit sur un nœud */
+#faq-preview .sec-head h2::after{content:"";position:absolute;left:0;bottom:-16px;width:min(100%,360px);height:5px;pointer-events:none;opacity:.55;background:linear-gradient(90deg,var(--accent),transparent) 0 50%/calc(100% - 10px) 1px no-repeat,radial-gradient(circle,var(--accent) 1.5px,transparent 2px) 100% 50%/5px 5px no-repeat;}
+
+/* Boutons secondaires : cadre ouvert (angles haut-gauche et bas-droite) qui s'écarte au survol et au focus */
+#work .btn-ghost::after,#about-teaser .btn-ghost::after,#galerie-preview .btn-ghost::after{content:"";position:absolute;inset:-5px;pointer-events:none;opacity:.7;background:linear-gradient(var(--accent),var(--accent)) 0 0/9px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 0 0/1px 9px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/9px 1px no-repeat,linear-gradient(var(--accent),var(--accent)) 100% 100%/1px 9px no-repeat;transition:inset .3s var(--ease);}
+#work .btn-ghost:is(:hover,:focus-visible)::after,#about-teaser .btn-ghost:is(:hover,:focus-visible)::after,#galerie-preview .btn-ghost:is(:hover,:focus-visible)::after{inset:-9px;}
+@media (prefers-reduced-motion:reduce){#work .btn-ghost::after,#about-teaser .btn-ghost::after,#galerie-preview .btn-ghost::after{transition:none;}}
+@media (max-width:760px){#clients .sec-head h2::after{display:none;}}
+
+/* ============================================================
+   Cadres des réalisations (9e passe) : le repère couvre tout le cadre (coins, bords) au lieu d'une bande en haut
+   Trois assemblages selon la position, mêmes angles de 15 px et même trait ; photos, vidéos et proportions inchangées.
+   Au survol et au focus clavier, le jeu de repères se rapproche de 4 px du bord. Symboles composés ajoutés : arc-dots, ring-ticks, intersect.
+   ============================================================ */
+:root{
+  --sy-arc-dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 14' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M3 8A9 9 0 0 1 21 8M24 8H30'/%3E%3Ccircle cx='3' cy='12' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='12' cy='12' r='1.4' fill='%23000' stroke='none'/%3E%3Ccircle cx='21' cy='12' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-ring-ticks:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 22' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M11 3A8 8 0 1 1 3 11M11 0V2M20 11H22M11 20V22'/%3E%3Ccircle cx='11' cy='11' r='1.4' fill='%23000' stroke='none'/%3E%3C/svg%3E");
+  --sy-intersect:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 6H9.6M14.4 6H24M12 1V11'/%3E%3Cpath d='M24 6H34' stroke-dasharray='2 2'/%3E%3Ccircle cx='12' cy='6' r='2.4'/%3E%3C/svg%3E");
+}
+.mk--arc-dots{--mk-img:var(--sy-arc-dots);--mk-w:30px;--mk-h:14px;}.mk--ring-ticks{--mk-img:var(--sy-ring-ticks);--mk-w:22px;--mk-h:22px;}.mk--intersect{--mk-img:var(--sy-intersect);--mk-w:34px;--mk-h:12px;}
+.plate::after{inset:auto;top:19px;left:19px;right:19px;height:calc(var(--h) - 38px);background:currentColor;transition:opacity .6s var(--ease) var(--dl,0ms),top .35s var(--ease),left .35s var(--ease),right .35s var(--ease),height .35s var(--ease);}
+.plate:nth-child(4n+1)::after,.plate:nth-child(4n+4)::after{-webkit-mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-scale-s) 0 100%/28px 8px no-repeat,var(--sy-ring-ticks) 100% 100%/22px 22px no-repeat;mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-scale-s) 0 100%/28px 8px no-repeat,var(--sy-ring-ticks) 100% 100%/22px 22px no-repeat;}
+.plate:nth-child(4n+2)::after{-webkit-mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-dot-r) 100% 0/15px 15px no-repeat,var(--sy-arc-dots) 100% 100%/30px 14px no-repeat;mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-dot-r) 100% 0/15px 15px no-repeat,var(--sy-arc-dots) 100% 100%/30px 14px no-repeat;}
+.plate:nth-child(4n+3)::after{-webkit-mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat,var(--sy-intersect) 0 100%/34px 12px no-repeat;mask:var(--sy-corner-arc) 0 0/15px 15px no-repeat,var(--sy-corner-r) 100% 0/15px 15px no-repeat,var(--sy-intersect) 0 100%/34px 12px no-repeat;}
+.plate:focus-visible::after{top:15px;left:15px;right:15px;height:calc(var(--h) - 30px);}
+@media (hover:hover){.plate:hover::after{top:15px;left:15px;right:15px;height:calc(var(--h) - 30px);}}
+@media (prefers-reduced-motion:reduce){.plate::after{transition:none;}}
+/* ≤ 900 px les cadres passent en 4/3 : le jeu de repères suit la même proportion (le padding en % est relatif à la largeur de la carte) */
+@media (max-width:900px){
+  .plate::after{height:0;padding-bottom:calc(75% - 38px);}
+  .plate:focus-visible::after{height:0;padding-bottom:calc(75% - 30px);}
+}
+@media (max-width:900px) and (hover:hover){.plate:hover::after{height:0;padding-bottom:calc(75% - 30px);}}
+
+/* ============================================================
+   COMPOSANTS PILOTES (10e passe) : un titre, un bouton, un cadre construits avec les mêmes règles
+   Règles communes : trait 1 px · nœud = anneau r 3,2 ou point r 1,4 · pas de pointillé 6/6 · angles de 9 (bouton) ou 15 px (cadre) · couleur --accent sur fond sombre, crème translucide sur photo
+   · une ligne de construction relie toujours deux symboles composés (départ et arrivée), jamais un repère isolé.
+   ============================================================ */
+/* Titre « Nos activités » : secteur gradué (départ) → ligne pointillée → quarts de cercle emboîtés (arrivée) */
+#activities .sec-head h2::before{width:30px;height:30px;vertical-align:.1em;margin-right:.35em;-webkit-mask:var(--sy-sector) center/contain no-repeat;mask:var(--sy-sector) center/contain no-repeat;}
+#activities .sec-head::after{width:36px;height:24px;align-self:center;opacity:.85;-webkit-mask:var(--sy-fan) 100% 50%/36px 24px no-repeat;mask:var(--sy-fan) 100% 50%/36px 24px no-repeat;}
+/* Bouton « Voir toutes nos réalisations » : cadre ouvert (existant) + ligne de construction qui part du bouton, croise un nœud puis finit sur un arc et trois points */
+#work .sec-more::after{flex:0 1 min(60%,520px);height:14px;background:var(--accent);opacity:.55;-webkit-mask:linear-gradient(#000,#000) 0 50%/calc(100% - 38px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;mask:linear-gradient(#000,#000) 0 50%/calc(100% - 38px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;}
+/* Cadre 01 : les deux angles hauts sont reliés par une cote pointillée discrète (les autres cadres n'ont pas cette cote) */
+.plate:nth-child(4n+1)::after{-webkit-mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-scale-s) 0 100%/28px 8px no-repeat,var(--sy-ring-ticks) 100% 100%/22px 22px no-repeat,repeating-linear-gradient(90deg,rgba(0,0,0,.5) 0 6px,transparent 6px 12px) 86px 7px/calc(100% - 118px) 1px no-repeat;mask:var(--sy-corner) 0 0/15px 15px no-repeat,var(--sy-corner-arc-r) 100% 0/15px 15px no-repeat,var(--sy-scale-s) 0 100%/28px 8px no-repeat,var(--sy-ring-ticks) 100% 100%/22px 22px no-repeat,repeating-linear-gradient(90deg,rgba(0,0,0,.5) 0 6px,transparent 6px 12px) 86px 7px/calc(100% - 118px) 1px no-repeat;}
+
+/* ============================================================
+   Généralisation des pilotes (10e passe) : même construction pour tous les titres, boutons « voir plus » et cadres de l'accueil
+   Titre = symbole composé de départ (30 px) · ligne de construction · symbole composé d'arrivée ; une famille de symboles différente par section.
+   Galerie : symbole de départ seulement, rien à droite du titre (demande explicite).
+   ============================================================ */
+#clients .sec-head h2::before{width:30px;height:30px;vertical-align:.1em;margin-right:.35em;-webkit-mask:var(--sy-compass) center/contain no-repeat;mask:var(--sy-compass) center/contain no-repeat;}
+#faq-preview .sec-head h2::before{width:30px;height:30px;vertical-align:.1em;margin-right:.35em;-webkit-mask:var(--sy-frame-dots) center/contain no-repeat;mask:var(--sy-frame-dots) center/contain no-repeat;}
+#galerie-preview .sec-head h2::before{width:36px;height:24px;vertical-align:.1em;margin-right:.35em;-webkit-mask:var(--sy-vector) center/contain no-repeat;mask:var(--sy-vector) center/contain no-repeat;}
+#clients .sec-head::after{width:30px;height:14px;align-self:center;opacity:.85;-webkit-mask:var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;mask:var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;}
+#faq-preview .sec-head::after{width:34px;height:12px;align-self:center;opacity:.85;-webkit-mask:var(--sy-intersect) 100% 50%/34px 12px no-repeat;mask:var(--sy-intersect) 100% 50%/34px 12px no-repeat;}
+/* Boutons « voir plus » : même ligne de construction que le pilote (nœud puis symbole d'arrivée propre à la section) */
+#about-teaser .sec-more::after{flex:0 1 min(60%,520px);height:24px;background:var(--accent);opacity:.55;-webkit-mask:linear-gradient(#000,#000) 0 50%/calc(100% - 44px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-fan) 100% 50%/36px 24px no-repeat;mask:linear-gradient(#000,#000) 0 50%/calc(100% - 44px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-fan) 100% 50%/36px 24px no-repeat;}
+#galerie-preview .sec-more::after{flex:0 1 min(60%,520px);height:14px;background:var(--accent);opacity:.55;-webkit-mask:linear-gradient(#000,#000) 0 50%/calc(100% - 38px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;mask:linear-gradient(#000,#000) 0 50%/calc(100% - 38px) 1px no-repeat,var(--sy-intersect) 40px 50%/34px 12px no-repeat,var(--sy-arc-dots) 100% 50%/30px 14px no-repeat;}
