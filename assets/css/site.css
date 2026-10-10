@@ -64,26 +64,6 @@ body{font-size:17px;line-height:1.6;}
 .hero .cta-row{animation-delay:.34s;}
 .hero-meta{animation-delay:.5s;}
 
-/* Carrousel d'accueil : première chose visible, plein écran, avant tout bloc de texte */
-.hero-carousel{position:relative;isolation:isolate;overflow:hidden;min-height:calc(100svh - 72px);display:flex;flex-direction:column;justify-content:flex-end;padding-block:0;}
-.carousel{position:absolute;inset:0;z-index:-1;}
-.carousel-track{position:relative;height:100%;}
-.carousel-slide{position:absolute;inset:0;opacity:0;transition:opacity .6s var(--ease);}
-.carousel-slide.is-active{opacity:1;}
-.carousel-slide img{width:100%;height:100%;object-fit:cover;}
-.carousel-slide-link{position:absolute;inset:0;display:block;}
-.carousel::before{content:"";position:absolute;inset:0;background:rgba(5,6,10,.32);pointer-events:none;}
-.carousel::after{content:"";position:absolute;inset:auto 0 0;height:55%;background:linear-gradient(180deg,transparent,var(--bg));pointer-events:none;}
-.carousel-nav{position:absolute;top:50%;translate:0 -50%;z-index:2;display:flex;align-items:center;justify-content:center;width:52px;height:52px;border:1px solid rgba(255,255,255,.35);border-radius:999px;background:rgba(5,6,10,.4);color:#fff;cursor:pointer;}
-.carousel-prev{left:clamp(12px,3vw,32px);}
-.carousel-next{right:clamp(12px,3vw,32px);}
-.carousel-dots{position:absolute;left:0;right:0;bottom:18px;z-index:2;display:flex;justify-content:center;gap:8px;}
-.carousel-dot{width:9px;height:9px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.4);cursor:pointer;}
-.carousel-dot.is-active{background:#fff;}
-.hero-carousel-overlay{position:relative;z-index:2;pointer-events:none;width:100%;padding-block:0 clamp(40px,7vh,72px);}
-.hero-carousel-overlay > *{pointer-events:auto;}
-@media (min-width:961px){.hero-carousel-overlay .lede,.hero-carousel-overlay .cta-row{max-width:min(46%,520px);}}
-@media (max-width:640px){.carousel-nav{width:40px;height:40px;top:110px;}}
 
 /* Bandeau « Ils nous font confiance » */
 .clients-band{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(20px,3vw,32px);align-items:center;}
@@ -434,3 +414,51 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
 .gear-body .btn{margin-top:8px;}
 @media (max-width:860px){.gear-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:520px){.gear-grid{grid-template-columns:1fr;}}
+
+/* ============================================================
+   Micrographics — repères géométriques décoratifs (accueil d'abord)
+   Motifs SVG en masque : la couleur vient des variables de la palette, jamais du SVG.
+   Tout est décor : pseudo-éléments, pointer-events:none, rien dans le HTML.
+   ============================================================ */
+:root{
+  --mk-node:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Ccircle cx='12' cy='12' r='6.5'/%3E%3Ccircle cx='12' cy='12' r='1.6' fill='%23000' stroke='none'/%3E%3Cpath d='M1 12h4M19 12h4M12 1v4M12 19v4'/%3E%3C/svg%3E");
+  --mk-arcs:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M200 130A70 70 0 0 0 130 200M200 90A110 110 0 0 0 90 200M200 50A150 150 0 0 0 50 200M200 10A190 190 0 0 0 10 200'/%3E%3Cpath d='M200 200L128 128M62 30v10M57 35h10M24 92v10M19 97h10' stroke-width='1'/%3E%3Ccircle cx='130' cy='200' r='2.6' fill='%23000' stroke='none'/%3E%3Ccircle cx='200' cy='90' r='2.6' fill='%23000' stroke='none'/%3E%3Ccircle cx='128' cy='128' r='4'/%3E%3C/svg%3E");
+  --mk-dots:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 36' fill='%23000'%3E%3Ccircle cx='6' cy='6' r='1.5'/%3E%3Ccircle cx='6' cy='18' r='1.5'/%3E%3Ccircle cx='6' cy='30' r='1.5'/%3E%3Ccircle cx='18' cy='6' r='1.5'/%3E%3Ccircle cx='18' cy='18' r='1.5'/%3E%3Ccircle cx='18' cy='30' r='1.5'/%3E%3Ccircle cx='30' cy='6' r='1.5'/%3E%3Ccircle cx='30' cy='18' r='1.5'/%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3Ccircle cx='42' cy='6' r='1.5'/%3E%3Ccircle cx='42' cy='18' r='1.5'/%3E%3Ccircle cx='42' cy='30' r='1.5'/%3E%3Ccircle cx='54' cy='6' r='1.5'/%3E%3Ccircle cx='54' cy='18' r='1.5'/%3E%3Ccircle cx='54' cy='30' r='1.5'/%3E%3Ccircle cx='66' cy='6' r='1.5'/%3E%3Ccircle cx='66' cy='18' r='1.5'/%3E%3Ccircle cx='66' cy='30' r='1.5'/%3E%3Ccircle cx='42' cy='18' r='5' fill='none' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E");
+}
+
+/* Titres de section : petit repère devant le titre (sans surtitre textuel) */
+#clients .sec-head h2::before,#activities .sec-head h2::before,#galerie-preview .sec-head h2::before,#faq-preview .sec-head h2::before{content:"";display:inline-block;width:.46em;height:.46em;margin-right:.4em;vertical-align:.04em;background:var(--accent);-webkit-mask:var(--mk-node) center/contain no-repeat;mask:var(--mk-node) center/contain no-repeat;}
+#activities .sec-head::after{content:"";width:72px;height:36px;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-dots) center/contain no-repeat;mask:var(--mk-dots) center/contain no-repeat;}
+
+/* Réalisations : repères de cadrage en haut du cadre + numéro de projet (data-idx) */
+.plate::before,.plate::after{content:"";position:absolute;z-index:3;pointer-events:none;color:color-mix(in srgb,var(--text) 72%,transparent);transition:opacity .6s var(--ease) var(--dl,0ms);}
+.plate::after{inset:19px 19px auto;height:15px;background:linear-gradient(currentColor,currentColor) 0 0/15px 1px no-repeat,linear-gradient(currentColor,currentColor) 0 0/1px 15px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/15px 1px no-repeat,linear-gradient(currentColor,currentColor) 100% 0/1px 15px no-repeat;}
+.plate::before{content:attr(data-idx);top:19px;left:42px;font-size:11px;font-weight:600;line-height:15px;letter-spacing:.18em;text-shadow:0 0 6px rgba(5,6,10,.7);}
+.js .plate[data-reveal]:not(.is-in)::before,.js .plate[data-reveal]:not(.is-in)::after{opacity:0;}
+
+/* Bandeau d'appel final : arcs en angle, signature de la page */
+.cta-band{overflow:hidden;}
+.cta-band::before{content:"";position:absolute;right:0;bottom:0;width:clamp(150px,24vw,320px);aspect-ratio:1;pointer-events:none;background:var(--accent);opacity:.32;-webkit-mask:var(--mk-arcs) right bottom/contain no-repeat;mask:var(--mk-arcs) right bottom/contain no-repeat;}
+
+/* Pied de page : graduation fine sous le filet, estompée sur les bords */
+footer{position:relative;}
+footer::before{content:"";position:absolute;inset:0 0 auto;height:6px;pointer-events:none;background:repeating-linear-gradient(90deg,var(--line) 0 1px,transparent 1px 24px);-webkit-mask:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);mask:linear-gradient(90deg,transparent,#000 18%,#000 82%,transparent);}
+@media (prefers-reduced-motion:reduce){.plate::before,.plate::after{transition:none;}}
+
+/* Micrographics, densité (2e passe) : mêmes tailles et teintes, plus de variété. Classes .mk* = réutilisables (Prestations, À propos). */
+:root{--mk-cross:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M12 3v18M3 12h18'/%3E%3Ccircle cx='12' cy='12' r='3.5'/%3E%3C/svg%3E");--mk-quarter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40' fill='none' stroke='%23000' stroke-width='1.5'%3E%3Cpath d='M3 37A34 34 0 0 1 37 3M3 37A22 22 0 0 1 25 15M3 37A10 10 0 0 1 13 27'/%3E%3Ccircle cx='3' cy='37' r='2' fill='%23000' stroke='none'/%3E%3Cpath d='M37 3v6M37 3h-6'/%3E%3C/svg%3E");--mk-ruler:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 72 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M0 11h72'/%3E%3Cpath d='M1 11v-8'/%3E%3Cpath d='M7 11v-4'/%3E%3Cpath d='M13 11v-4'/%3E%3Cpath d='M19 11v-4'/%3E%3Cpath d='M25 11v-8'/%3E%3Cpath d='M31 11v-4'/%3E%3Cpath d='M37 11v-4'/%3E%3Cpath d='M43 11v-4'/%3E%3Cpath d='M49 11v-8'/%3E%3Cpath d='M55 11v-4'/%3E%3Cpath d='M61 11v-4'/%3E%3Cpath d='M67 11v-4'/%3E%3C/svg%3E");--mk-crosses:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 12' fill='none' stroke='%23000' stroke-width='1.2'%3E%3Cpath d='M6 2v8M2 6h8'/%3E%3Cpath d='M30 2v8M26 6h8'/%3E%3Cpath d='M54 2v8M50 6h8'/%3E%3Ccircle cx='30' cy='6' r='2'/%3E%3C/svg%3E");}
+.mk{display:block;flex:none;width:var(--mk-w,72px);height:var(--mk-h,36px);background:var(--accent);opacity:.5;pointer-events:none;-webkit-mask:var(--mk-img) center/contain no-repeat;mask:var(--mk-img) center/contain no-repeat;}
+.mk--node{--mk-img:var(--mk-node);--mk-w:18px;--mk-h:18px;}.mk--arcs{--mk-img:var(--mk-arcs);--mk-w:160px;--mk-h:160px;}.mk--dots{--mk-img:var(--mk-dots);}.mk--cross{--mk-img:var(--mk-cross);--mk-w:14px;--mk-h:14px;}.mk--quarter{--mk-img:var(--mk-quarter);--mk-w:40px;--mk-h:40px;}.mk--ruler{--mk-img:var(--mk-ruler);--mk-h:12px;}
+#clients .sec-head::after,#faq-preview .sec-head::after{content:"";flex:none;width:60px;height:12px;background:var(--accent);opacity:.5;-webkit-mask:var(--mk-crosses) center/contain no-repeat;mask:var(--mk-crosses) center/contain no-repeat;}
+#faq-preview .sec-head::after{width:72px;-webkit-mask-image:var(--mk-ruler);mask-image:var(--mk-ruler);}
+#galerie-preview .sec-head h2::after{content:"";display:inline-block;width:.6em;height:.6em;margin-left:.4em;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-quarter) center/contain no-repeat;mask:var(--mk-quarter) center/contain no-repeat;}
+/* Repère d'enregistrement au centre de chaque séparateur de section */
+#about-teaser::before,#clients::before,#activities::before,#galerie-preview::before,#faq-preview::before{content:"";position:absolute;top:-7px;left:50%;width:14px;height:14px;translate:-50% 0;pointer-events:none;background:var(--accent);opacity:.55;-webkit-mask:var(--mk-cross) center/contain no-repeat;mask:var(--mk-cross) center/contain no-repeat;}
+/* Activités : numéro discret dans l'angle de chaque tuile */
+.activities-grid{counter-reset:act;}
+.activity-tile{position:relative;}
+.activity-tile::before{counter-increment:act;content:"A" counter(act,decimal-leading-zero);position:absolute;top:9px;left:14px;font-size:10px;font-weight:600;letter-spacing:.18em;color:var(--muted);opacity:.7;pointer-events:none;}
+.activity-tile:hover::before{color:inherit;}
+/* Réalisations : trois variantes d'index, alternées */
+.plate:nth-child(3n+2)::before{content:attr(data-idx) " —";}
+.plate:nth-child(3n)::before{content:"N° " attr(data-idx);}
