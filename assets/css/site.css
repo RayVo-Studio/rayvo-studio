@@ -596,6 +596,9 @@ main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;lef
 }
 /* Titre de la présentation : sous-lignage en axe interrompu (ligne, anneau, point), sans décaler le texte */
 #about-teaser .about-title{position:relative;}
+#about-teaser .about-title{font-size:clamp(24px,2.9vw,38px);}
+#about-teaser .about-title span{display:block;white-space:nowrap;}
+#about-teaser .about-title span + span{margin-top:.3em;}
 #about-teaser .about-title::after{content:"";position:absolute;left:0;bottom:-22px;width:56px;height:10px;pointer-events:none;opacity:.6;background:var(--accent);-webkit-mask:var(--sy-axis) 0 0/100% 100% no-repeat;mask:var(--sy-axis) 0 0/100% 100% no-repeat;}
 
 /* Boutons secondaires de l'accueil : un repère à gauche du bouton qui s'allonge au survol et au focus */
