@@ -237,15 +237,6 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 #work::before{content:"";position:absolute;inset:0 -5%;z-index:-1;pointer-events:none;background:radial-gradient(60% 46% at 50% 45%,color-mix(in srgb,var(--ambient) 32%,transparent),transparent 72%);opacity:0;transition:opacity .9s ease;}
 #work.has-ambient::before{opacity:1;}
 
-/* Console grandMA3 en 3D : image d'attente, puis scène 3D qui la remplace en fondu */
-.scene3d{position:absolute;top:0;right:0;bottom:56px;width:60%;z-index:1;cursor:default;}
-.scene3d picture,.scene3d canvas,.scene-poster{position:absolute;inset:0;width:100%;height:100%;}
-.scene-poster{object-fit:contain;transition:opacity .8s ease;}
-.scene3d canvas{display:block;opacity:0;transition:opacity .8s ease;}
-.hero.has-3d .scene3d canvas{opacity:1;}
-.hero.has-3d .scene-poster{opacity:0;}
-@media (max-width:960px){.scene3d{position:relative;order:2;width:100%;height:clamp(300px,86vw,440px);top:auto;right:auto;bottom:auto;}}
-
 /* Page introuvable (404.html) */
 .notfound{min-height:100svh;display:flex;align-items:center;}
 .notfound .wrap{display:flex;flex-direction:column;align-items:flex-start;gap:20px;}
@@ -275,7 +266,7 @@ section + section::after{content:"";position:absolute;top:0;left:50%;transform:t
 .filter-chip:hover{color:var(--text);}
 .filter-chip[aria-pressed="true"]{background:var(--text);color:var(--bg);border-color:var(--text);}
 
-/* Page vide honnête (Backline, Recrutement tant qu'il n'y a pas de catalogue/offre) */
+/* Page vide honnête (Recrutement tant qu'il n'y a pas d'offre) */
 .empty-state{max-width:62ch;color:var(--muted);font-size:17px;}
 .empty-state .btn{margin-top:20px;}
 
@@ -388,33 +379,7 @@ body::after{content:"";position:fixed;inset:0;z-index:40;pointer-events:none;bac
 @media (max-width: 360px){
   .navlinks .nav-cta{display:none;} /* « Contact » est dans la liste du menu */
 }
-.scene3d,.step-3d{-webkit-tap-highlight-color:transparent;}
-
-/* Moment signature : sur grand écran, l'accroche reste collée pendant que la caméra plonge dans l'écran de la console */
-.hero-track.is-dive{position:relative;height:calc((100svh - 72px) * 2.4);}
-.hero-track.is-dive .hero{position:sticky;top:72px;height:calc(100svh - 72px);min-height:0;}
-.hero-track.is-dive .scene3d{left:0;width:100%;}
-.hero-track.is-dive .scene3d picture{left:40%;width:60%;}
-.hero-track.is-dive .hero-inner,.hero-track.is-dive .hero-meta{filter:opacity(calc(1 - var(--dive,0) * 1.7));}
-.hero-track.is-dive .hero-inner{translate:calc(var(--dive,0) * -70px) 0;}
-.hero-track.is-dive .hero.is-diving .hero-inner{pointer-events:none;}
-.hero-track.is-dive .hero.is-diving .hero-inner > *{pointer-events:none;}
-.hero-track.is-dive .stage{opacity:calc(1 - var(--dive,0) * 0.6);}
-
-/* Catalogue de location (page Location backline) */
-.gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,32px);}
-.gear-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:var(--surface);}
-.gear-frame{aspect-ratio:4/3;background:#05060a;}
-.gear-frame img{width:100%;height:100%;object-fit:cover;display:block;}
-.gear-frame--color{background:linear-gradient(135deg, color-mix(in srgb, var(--frame-color) 35%, #140f08), var(--frame-color));}
-.gear-body{display:flex;flex-direction:column;align-items:flex-start;gap:8px;padding:clamp(18px,2.4vw,24px);}
-.gear-body .tag{font-size:13px;letter-spacing:0.08em;color:var(--accent);}
-.gear-body h3{font-family:var(--font);font-weight:600;font-size:clamp(19px,1.6vw,22px);}
-.gear-body p{margin:0;color:var(--muted);font-size:16px;}
-.gear-qty{font-size:14px;color:var(--muted);}
-.gear-body .btn{margin-top:8px;}
-@media (max-width:860px){.gear-grid{grid-template-columns:repeat(2,1fr);}}
-@media (max-width:520px){.gear-grid{grid-template-columns:1fr;}}
+.step-3d{-webkit-tap-highlight-color:transparent;}
 
 /* ============================================================
    Micrographics — repères géométriques décoratifs (accueil d'abord)
