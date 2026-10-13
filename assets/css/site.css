@@ -83,7 +83,7 @@ body{font-size:17px;line-height:1.6;}
 
 /* Sections */
 section{padding-block:var(--section);}
-.sr-only + #work{padding-top:clamp(24px,4vw,48px);}
+.sr-only + #work,#work:has(.wrap > .sr-only:first-child){padding-top:clamp(24px,4vw,48px);}
 .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px 32px;flex-wrap:wrap;margin-bottom:clamp(40px,6vw,72px);}
 .sec-head h1,.sec-head h2{font-size:clamp(34px,4.8vw,58px);line-height:1.05;}
 .sec-sub{margin:0;color:var(--muted);font-size:17px;}
@@ -114,6 +114,7 @@ section{padding-block:var(--section);}
 /* Réalisations : grille éditoriale */
 .grid-plates{--h:clamp(280px,36vw,540px);display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(40px,4.5vw,64px) clamp(18px,2.4vw,32px);}
 .plate{position:relative;grid-column:span 6;display:flex;flex-direction:column;gap:20px;text-decoration:none;color:inherit;}
+.plate[hidden]{display:none;}
 .plate:nth-child(4n+1),.plate:nth-child(4n+4){grid-column:span 8;}
 .plate:nth-child(4n+2),.plate:nth-child(4n+3){grid-column:span 4;}
 .plate:last-child:nth-child(4n+1),.plate:last-child:nth-child(4n+3){grid-column:1 / -1;}
@@ -826,3 +827,44 @@ main:has(#faq-preview) + footer::after{content:"";position:absolute;top:-7px;lef
 @media (prefers-reduced-motion:reduce){
   .js :is(#clients,#activities,#galerie-preview,#faq-preview) .sec-head[data-reveal],.js #activities .sec-head[data-reveal]::before,.js #activities .sec-head[data-reveal] h2::after,.js .plate[data-reveal]::after,.js #faq-preview ~ .cta-band[data-reveal]::before{transition:none;}
 }
+
+/* ===== MICROGRAPHICS — pages dédiées (2026-10-13) =====
+   Même langage que l'accueil, par sélecteurs génériques (aucune règle par page) : séparateurs de section, règle de titre,
+   symbole de titre, boutons du bandeau final, pied de page. Réutilise --mk-* / --sy-* ; l'accueil (#faq-preview) est exclu. */
+/* Séparateurs : croix · nœud · croix + une paire de symboles, qui alterne d'une section à l'autre */
+main:not(:has(#faq-preview)) > section:not(.cta-band) + section:not(.cta-band)::before{content:"";position:absolute;top:-18px;left:max(0px,calc(50% - 620px));width:min(100%,1240px);height:36px;pointer-events:none;background:var(--accent);opacity:.55;--mk-reg-base:var(--mk-cross) var(--gutter) 50%/14px 14px no-repeat,var(--mk-node) 50% 50%/14px 14px no-repeat,var(--mk-cross) calc(100% - var(--gutter)) 50%/14px 14px no-repeat;--mk-reg:var(--mk-reg-base),var(--sy-sector) calc(50% + -58px) 50%/36px 36px no-repeat,var(--sy-grid-a) calc(50% + 58px) 50%/36px 24px no-repeat;-webkit-mask:var(--mk-reg);mask:var(--mk-reg);}
+main:not(:has(#faq-preview)) > section:not(.cta-band) + section:not(.cta-band):nth-of-type(3n+2)::before{--mk-reg:var(--mk-reg-base),var(--sy-compass) calc(50% + -55px) 50%/30px 30px no-repeat,var(--sy-signal) calc(50% + 68px) 50%/56px 14px no-repeat;}
+main:not(:has(#faq-preview)) > section:not(.cta-band) + section:not(.cta-band):nth-of-type(3n)::before{--mk-reg:var(--mk-reg-base),var(--sy-frame-dots) calc(50% + -55px) 50%/30px 30px no-repeat,var(--sy-dial) calc(50% + 58px) 50%/36px 20px no-repeat;}
+/* Titres : règle éditoriale pleine largeur (filet · segment · nœud), segment à gauche puis à droite en alternance, + symbole de départ */
+main:not(:has(#faq-preview)) .sec-head{padding-bottom:18px;margin-bottom:calc(clamp(40px,6vw,72px) - 18px);background:linear-gradient(var(--line),var(--line)) left bottom 3px/100% 1px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom 2.5px/56px 2px no-repeat,radial-gradient(circle,var(--accent) 1.8px,transparent 2.4px) left 56px bottom .5px/6px 6px no-repeat;}
+main:not(:has(#faq-preview)) section:nth-of-type(even) .sec-head{background:linear-gradient(var(--line),var(--line)) right bottom 3px/100% 1px no-repeat,linear-gradient(var(--accent),var(--accent)) right bottom 2.5px/56px 2px no-repeat,radial-gradient(circle,var(--accent) 1.8px,transparent 2.4px) right 56px bottom .5px/6px 6px no-repeat;}
+main:not(:has(#faq-preview)) .sec-head :is(h1,h2)::before{content:"";display:inline-block;width:30px;height:30px;margin-right:.35em;vertical-align:.1em;background:var(--accent);-webkit-mask:var(--sy-sector) center/contain no-repeat;mask:var(--sy-sector) center/contain no-repeat;}
+main:not(:has(#faq-preview)) section:nth-of-type(3n+2) .sec-head :is(h1,h2)::before{-webkit-mask-image:var(--sy-compass);mask-image:var(--sy-compass);}
+main:not(:has(#faq-preview)) section:nth-of-type(3n) .sec-head :is(h1,h2)::before{-webkit-mask-image:var(--sy-frame-dots);mask-image:var(--sy-frame-dots);}
+/* Bandeau final et pied de page : mêmes filets de bouton et même graduation que l'accueil, sur toutes les pages */
+.cta-band .btn-primary{position:relative;}
+.cta-band .btn-primary::before,.cta-band .btn-primary::after{content:"";position:absolute;top:50%;width:40px;height:1px;pointer-events:none;opacity:.65;transition:width .3s var(--ease);}
+.cta-band .btn-primary::before{right:calc(100% + 14px);background:linear-gradient(90deg,transparent,var(--accent)) 0 0/100% 1px no-repeat;}
+.cta-band .btn-primary::after{left:calc(100% + 14px);background:linear-gradient(270deg,transparent,var(--accent)) 0 0/100% 1px no-repeat;}
+.cta-band .btn-primary:is(:hover,:focus-visible)::before,.cta-band .btn-primary:is(:hover,:focus-visible)::after{width:64px;}
+main + footer::after{content:"";position:absolute;top:-7px;left:max(0px,calc(50% - 620px));width:min(100%,1240px);height:14px;pointer-events:none;background:var(--accent);opacity:.45;--mk-reg:var(--mk-cross) var(--gutter) 50%/14px 14px no-repeat,var(--mk-cross) calc(100% - var(--gutter)) 50%/14px 14px no-repeat;-webkit-mask:var(--mk-reg);mask:var(--mk-reg);}
+@media (max-width:760px){.cta-band .btn-primary::before,.cta-band .btn-primary::after{display:none;}}
+@media (prefers-reduced-motion:reduce){.cta-band .btn-primary::before,.cta-band .btn-primary::after{transition:none;}}
+/* Paragraphes de présentation (plusieurs blocs de texte) */
+.about-body p + p{margin-top:1em;}
+/* Pages légales (mentions, CGV) : même règle de titre que les autres pages, repère devant chaque intertitre */
+.legal-page h1{padding-bottom:18px;margin-bottom:0;background:linear-gradient(var(--line),var(--line)) left bottom 3px/100% 1px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom 2.5px/56px 2px no-repeat,radial-gradient(circle,var(--accent) 1.8px,transparent 2.4px) left 56px bottom .5px/6px 6px no-repeat;}
+.legal-page h1::before{content:"";display:inline-block;width:30px;height:30px;margin-right:.35em;vertical-align:.1em;background:var(--accent);-webkit-mask:var(--sy-frame-dots) center/contain no-repeat;mask:var(--sy-frame-dots) center/contain no-repeat;}
+.legal-page h2::before{content:"";display:inline-block;width:14px;height:14px;margin-right:.55em;vertical-align:-.1em;background:var(--accent);opacity:.7;-webkit-mask:var(--mk-cross) center/contain no-repeat;mask:var(--mk-cross) center/contain no-repeat;}
+/* Contact : titre avec règle courte (comme « Présentation »), liste d'infos encadrée par quatre angles, repère devant le message vide du recrutement */
+.contact-main h2{position:relative;padding-bottom:26px;}
+.contact-main h2::after{content:"";position:absolute;left:0;bottom:0;width:56px;height:10px;pointer-events:none;background:linear-gradient(var(--accent),var(--accent)) 0 50%/48px 2px no-repeat,radial-gradient(circle,var(--accent) 1.8px,transparent 2.4px) 100% 50%/8px 8px no-repeat;}
+.contact-list{position:relative;}
+.contact-list::before,.contact-list::after{content:"";position:absolute;width:15px;height:15px;pointer-events:none;background:var(--accent);opacity:.7;}
+.contact-list::before{top:8px;left:8px;-webkit-mask:var(--sy-corner) 0 0/100% 100% no-repeat;mask:var(--sy-corner) 0 0/100% 100% no-repeat;}
+.contact-list::after{right:8px;bottom:8px;-webkit-mask:var(--sy-corner-r) 0 0/100% 100% no-repeat;mask:var(--sy-corner-r) 0 0/100% 100% no-repeat;transform:scale(-1);}
+.empty-state{position:relative;padding-left:34px;}
+.empty-state::before{content:"";position:absolute;left:0;top:.35em;width:20px;height:20px;background:var(--accent);opacity:.7;-webkit-mask:var(--sy-corner-dot) center/contain no-repeat;mask:var(--sy-corner-dot) center/contain no-repeat;}
+/* Page 404 : même règle de titre et même repère que les pages légales */
+.notfound h1{padding-bottom:18px;background:linear-gradient(var(--line),var(--line)) left bottom 3px/100% 1px no-repeat,linear-gradient(var(--accent),var(--accent)) left bottom 2.5px/56px 2px no-repeat,radial-gradient(circle,var(--accent) 1.8px,transparent 2.4px) left 56px bottom .5px/6px 6px no-repeat;}
+.notfound h1::before{content:"";display:inline-block;width:30px;height:30px;margin-right:.35em;vertical-align:.1em;background:var(--accent);-webkit-mask:var(--sy-compass) center/contain no-repeat;mask:var(--sy-compass) center/contain no-repeat;}
